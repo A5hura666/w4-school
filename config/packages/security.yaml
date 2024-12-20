@@ -20,8 +20,13 @@ security:
                 login_path: app_login
                 check_path: app_login
                 enable_csrf: true
+                success_handler: App\Security\LoginSuccessHandler
+                default_target_path: app_default_redirect
             logout:
                 path: app_logout
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800 # 1 week in seconds
                 # where to redirect after logout
                 # target: app_any_route
 
