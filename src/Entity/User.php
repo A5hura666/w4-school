@@ -39,9 +39,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $last_name = null;
 
+    /**
+     * @var Collection<int, Submissions>
+     */
+    #[ORM\OneToMany(targetEntity: Submissions::class, mappedBy: 'student_id')]
+    private Collection $submissions;
+
+    /**
+     * @var Collection<int, CourseEnrollments>
+     */
+    #[ORM\OneToMany(targetEntity: CourseEnrollments::class, mappedBy: 'studentId')]
+    private Collection $courseEnrollments;
+
+    /**
+     * @var Collection<int, LessonProgress>
+     */
+    #[ORM\OneToMany(targetEntity: LessonProgress::class, mappedBy: 'studentId')]
+    private Collection $lessonProgress;
+
+    /**
+     * @var Collection<int, Notifications>
+     */
+    #[ORM\OneToMany(targetEntity: Notifications::class, mappedBy: 'userId')]
+    private Collection $notifications;
+
 
     public function __construct()
     {
+        $this->submissions = new ArrayCollection();
+        $this->courseEnrollments = new ArrayCollection();
+        $this->lessonProgress = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -139,6 +167,126 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastName(string $last_name): static
     {
         $this->last_name = $last_name;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Submissions>
+     */
+    public function getSubmissions(): Collection
+    {
+        return $this->submissions;
+    }
+
+    public function addSubmission(Submissions $submission): static
+    {
+        if (!$this->submissions->contains($submission)) {
+            $this->submissions->add($submission);
+            $submission->setStudentId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubmission(Submissions $submission): static
+    {
+        if ($this->submissions->removeElement($submission)) {
+            // set the owning side to null (unless already changed)
+            if ($submission->getStudentId() === $this) {
+                $submission->setStudentId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CourseEnrollments>
+     */
+    public function getCourseEnrollments(): Collection
+    {
+        return $this->courseEnrollments;
+    }
+
+    public function addCourseEnrollment(CourseEnrollments $courseEnrollment): static
+    {
+        if (!$this->courseEnrollments->contains($courseEnrollment)) {
+            $this->courseEnrollments->add($courseEnrollment);
+            $courseEnrollment->setStudentId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCourseEnrollment(CourseEnrollments $courseEnrollment): static
+    {
+        if ($this->courseEnrollments->removeElement($courseEnrollment)) {
+            // set the owning side to null (unless already changed)
+            if ($courseEnrollment->getStudentId() === $this) {
+                $courseEnrollment->setStudentId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LessonProgress>
+     */
+    public function getLessonProgress(): Collection
+    {
+        return $this->lessonProgress;
+    }
+
+    public function addLessonProgress(LessonProgress $lessonProgress): static
+    {
+        if (!$this->lessonProgress->contains($lessonProgress)) {
+            $this->lessonProgress->add($lessonProgress);
+            $lessonProgress->setStudentId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLessonProgress(LessonProgress $lessonProgress): static
+    {
+        if ($this->lessonProgress->removeElement($lessonProgress)) {
+            // set the owning side to null (unless already changed)
+            if ($lessonProgress->getStudentId() === $this) {
+                $lessonProgress->setStudentId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Notifications>
+     */
+    public function getNotifications(): Collection
+    {
+        return $this->notifications;
+    }
+
+    public function addNotification(Notifications $notification): static
+    {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications->add($notification);
+            $notification->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotification(Notifications $notification): static
+    {
+        if ($this->notifications->removeElement($notification)) {
+            // set the owning side to null (unless already changed)
+            if ($notification->getUserId() === $this) {
+                $notification->setUserId(null);
+            }
+        }
 
         return $this;
     }

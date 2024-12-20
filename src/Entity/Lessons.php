@@ -41,9 +41,23 @@ class Lessons
     #[ORM\OneToMany(targetEntity: Exercises::class, mappedBy: 'lesson_id')]
     private Collection $exercises;
 
+    /**
+     * @var Collection<int, LessonMedia>
+     */
+    #[ORM\OneToMany(targetEntity: LessonMedia::class, mappedBy: 'lessonId')]
+    private Collection $lessonMedia;
+
+    /**
+     * @var Collection<int, LessonProgress>
+     */
+    #[ORM\OneToMany(targetEntity: LessonProgress::class, mappedBy: 'lessonId')]
+    private Collection $lessonProgress;
+
     public function __construct()
     {
         $this->exercises = new ArrayCollection();
+        $this->lessonMedia = new ArrayCollection();
+        $this->lessonProgress = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -147,6 +161,66 @@ class Lessons
             // set the owning side to null (unless already changed)
             if ($exercise->getLessonId() === $this) {
                 $exercise->setLessonId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LessonMedia>
+     */
+    public function getLessonMedia(): Collection
+    {
+        return $this->lessonMedia;
+    }
+
+    public function addLessonMedium(LessonMedia $lessonMedium): static
+    {
+        if (!$this->lessonMedia->contains($lessonMedium)) {
+            $this->lessonMedia->add($lessonMedium);
+            $lessonMedium->setLessonId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLessonMedium(LessonMedia $lessonMedium): static
+    {
+        if ($this->lessonMedia->removeElement($lessonMedium)) {
+            // set the owning side to null (unless already changed)
+            if ($lessonMedium->getLessonId() === $this) {
+                $lessonMedium->setLessonId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LessonProgress>
+     */
+    public function getLessonProgress(): Collection
+    {
+        return $this->lessonProgress;
+    }
+
+    public function addLessonProgress(LessonProgress $lessonProgress): static
+    {
+        if (!$this->lessonProgress->contains($lessonProgress)) {
+            $this->lessonProgress->add($lessonProgress);
+            $lessonProgress->setLessonId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLessonProgress(LessonProgress $lessonProgress): static
+    {
+        if ($this->lessonProgress->removeElement($lessonProgress)) {
+            // set the owning side to null (unless already changed)
+            if ($lessonProgress->getLessonId() === $this) {
+                $lessonProgress->setLessonId(null);
             }
         }
 

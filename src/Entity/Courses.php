@@ -38,9 +38,24 @@ class Courses
     #[ORM\OneToMany(targetEntity: Chapters::class, mappedBy: 'course_id')]
     private Collection $chapters;
 
+    /**
+     * @var Collection<int, CourseEnrollments>
+     */
+    #[ORM\OneToMany(targetEntity: CourseEnrollments::class, mappedBy: 'coursesId')]
+    private Collection $courseEnrollments;
+
+    /**
+     * @var Collection<int, CourseTags>
+     */
+    #[ORM\OneToMany(targetEntity: CourseTags::class, mappedBy: 'courseId')]
+    private Collection $courseTags;
+
+
     public function __construct()
     {
         $this->chapters = new ArrayCollection();
+        $this->courseEnrollments = new ArrayCollection();
+        $this->courseTags = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -132,6 +147,66 @@ class Courses
             // set the owning side to null (unless already changed)
             if ($chapter->getCourseId() === $this) {
                 $chapter->setCourseId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CourseEnrollments>
+     */
+    public function getCourseEnrollments(): Collection
+    {
+        return $this->courseEnrollments;
+    }
+
+    public function addCourseEnrollment(CourseEnrollments $courseEnrollment): static
+    {
+        if (!$this->courseEnrollments->contains($courseEnrollment)) {
+            $this->courseEnrollments->add($courseEnrollment);
+            $courseEnrollment->setCoursesId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCourseEnrollment(CourseEnrollments $courseEnrollment): static
+    {
+        if ($this->courseEnrollments->removeElement($courseEnrollment)) {
+            // set the owning side to null (unless already changed)
+            if ($courseEnrollment->getCoursesId() === $this) {
+                $courseEnrollment->setCoursesId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CourseTags>
+     */
+    public function getCourseTags(): Collection
+    {
+        return $this->courseTags;
+    }
+
+    public function addCourseTag(CourseTags $courseTag): static
+    {
+        if (!$this->courseTags->contains($courseTag)) {
+            $this->courseTags->add($courseTag);
+            $courseTag->setCourseId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCourseTag(CourseTags $courseTag): static
+    {
+        if ($this->courseTags->removeElement($courseTag)) {
+            // set the owning side to null (unless already changed)
+            if ($courseTag->getCourseId() === $this) {
+                $courseTag->setCourseId(null);
             }
         }
 

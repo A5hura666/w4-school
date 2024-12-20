@@ -11,32 +11,12 @@ Application de cours en ligne :
 
 ## Structure BDD
 
-- User:
-    - id
-    - email
-    - Name
-    - FirstName
-    - Roles
-
-- courses_category
-  - id
-  - Name
-
-- courses_chapter
-  - id
-  - id_category
-  - name
-  - description
-  - done
-  - id_user
-
-- courses
-  - id
-  - id_chapter
-  - name
-  - description
-- questions
-
+notifications
+* id (INT, Primary Key, Auto Increment)
+* user_id (INT, Foreign Key vers users.id)
+* message (TEXT)
+* is_read (BOOLEAN, défaut : false)
+* created_at (TIMESTAMP)
 ## Partage des tâches
 
 

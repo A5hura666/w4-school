@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ExercisesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -31,6 +33,17 @@ class Exercises
 
     #[ORM\ManyToOne(inversedBy: 'exercises')]
     private ?lessons $lesson_id = null;
+
+    /**
+     * @var Collection<int, Submissions>
+     */
+    #[ORM\OneToMany(targetEntity: Submissions::class, mappedBy: 'exercice_id')]
+    private Collection $submissions;
+
+    public function __construct()
+    {
+        $this->submissions = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -105,6 +118,36 @@ class Exercises
     public function setLessonId(?lessons $lesson_id): static
     {
         $this->lesson_id = $lesson_id;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Submissions>
+     */
+    public function getSubmissions(): Collection
+    {
+        return $this->submissions;
+    }
+
+    public function addSubmission(Submissions $submission): static
+    {
+        if (!$this->submissions->contains($submission)) {
+            $this->submissions->add($submission);
+            $submission->setExerciceId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubmission(Submissions $submission): static
+    {
+        if ($this->submissions->removeElement($submission)) {
+            // set the owning side to null (unless already changed)
+            if ($submission->getExerciceId() === $this) {
+                $submission->setExerciceId(null);
+            }
+        }
 
         return $this;
     }
