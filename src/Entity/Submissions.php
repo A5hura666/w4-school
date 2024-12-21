@@ -51,7 +51,7 @@ class Submissions
         return $this->student;
     }
 
-    public function setStudentId(?User $student): static
+    public function setStudent(?User $student): static
     {
         $this->student = $student;
 
