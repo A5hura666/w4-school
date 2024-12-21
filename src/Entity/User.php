@@ -42,25 +42,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Submissions>
      */
-    #[ORM\OneToMany(targetEntity: Submissions::class, mappedBy: 'student_id')]
+    #[ORM\OneToMany(targetEntity: Submissions::class, mappedBy: 'student')]
     private Collection $submissions;
 
     /**
      * @var Collection<int, CourseEnrollments>
      */
-    #[ORM\OneToMany(targetEntity: CourseEnrollments::class, mappedBy: 'studentId')]
+    #[ORM\OneToMany(targetEntity: CourseEnrollments::class, mappedBy: 'student')]
     private Collection $courseEnrollments;
 
     /**
      * @var Collection<int, LessonProgress>
      */
-    #[ORM\OneToMany(targetEntity: LessonProgress::class, mappedBy: 'studentId')]
+    #[ORM\OneToMany(targetEntity: LessonProgress::class, mappedBy: 'student')]
     private Collection $lessonProgress;
 
     /**
      * @var Collection<int, Notifications>
      */
-    #[ORM\OneToMany(targetEntity: Notifications::class, mappedBy: 'userId')]
+    #[ORM\OneToMany(targetEntity: Notifications::class, mappedBy: 'user')]
     private Collection $notifications;
 
 

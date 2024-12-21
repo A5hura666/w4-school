@@ -14,36 +14,36 @@ class LessonMedia
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'lessonMedia')]
-    private ?Lessons $lessonId = null;
+    private ?Lessons $lesson = null;
 
     #[ORM\ManyToOne(inversedBy: 'lessonMedia')]
-    private ?Media $mediaId = null;
+    private ?Media $media = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getLessonId(): ?Lessons
+    public function getLesson(): ?Lessons
     {
-        return $this->lessonId;
+        return $this->lesson;
     }
 
-    public function setLessonId(?Lessons $lessonId): static
+    public function setLesson(?Lessons $lesson): static
     {
-        $this->lessonId = $lessonId;
+        $this->lesson = $lesson;
 
         return $this;
     }
 
-    public function getMediaId(): ?Media
+    public function getMedia(): ?Media
     {
-        return $this->mediaId;
+        return $this->media;
     }
 
-    public function setMediaId(?Media $mediaId): static
+    public function setMediaId(?Media $media): static
     {
-        $this->mediaId = $mediaId;
+        $this->media = $media;
 
         return $this;
     }

@@ -14,10 +14,10 @@ class CourseTags
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'courseTags')]
-    private ?Courses $courseId = null;
+    private ?Courses $course = null;
 
     #[ORM\ManyToOne(inversedBy: 'courseTags')]
-    private ?Tags $tagId = null;
+    private ?Tags $tag = null;
 
     public function getId(): ?int
     {
@@ -26,24 +26,24 @@ class CourseTags
 
     public function getCourseId(): ?Courses
     {
-        return $this->courseId;
+        return $this->course;
     }
 
-    public function setCourseId(?Courses $courseId): static
+    public function setCourseId(?Courses $course): static
     {
-        $this->courseId = $courseId;
+        $this->course = $course;
 
         return $this;
     }
 
     public function getTagId(): ?Tags
     {
-        return $this->tagId;
+        return $this->tag;
     }
 
-    public function setTagId(?Tags $tagId): static
+    public function setTagId(?Tags $tag): static
     {
-        $this->tagId = $tagId;
+        $this->tag = $tag;
 
         return $this;
     }

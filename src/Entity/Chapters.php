@@ -32,12 +32,12 @@ class Chapters
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'chapters')]
-    private ?courses $course_id = null;
+    private ?courses $course = null;
 
     /**
      * @var Collection<int, Lessons>
      */
-    #[ORM\OneToMany(targetEntity: Lessons::class, mappedBy: 'chapter_id', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Lessons::class, mappedBy: 'chapter', orphanRemoval: true)]
     private Collection $lessons;
 
     public function __construct()
@@ -112,12 +112,12 @@ class Chapters
 
     public function getCourseId(): ?courses
     {
-        return $this->course_id;
+        return $this->course;
     }
 
-    public function setCourseId(?courses $course_id): static
+    public function setCourseId(?courses $course): static
     {
-        $this->course_id = $course_id;
+        $this->course = $course;
 
         return $this;
     }

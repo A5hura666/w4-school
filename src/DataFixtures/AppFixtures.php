@@ -2,9 +2,14 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Chapters;
+use App\Entity\Courses;
+use App\Entity\CourseTags;
+use App\Entity\Tags;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use PhpCsFixer\DocBlock\Tag;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
@@ -38,6 +43,38 @@ class AppFixtures extends Fixture
             ->setRoles(['ROLE_ADMIN'])
             ->setPassword($this->hasher->hashPassword($admin, 'admin'));
         $manager->persist($admin);
+
+        $tagPHP = new Tags();
+        $tagPHP->setName('PHP');
+        $manager->persist($tagPHP);
+
+        $tagJS = new Tags();
+        $tagJS->setName('JavaScript');
+        $manager->persist($tagJS);
+
+        $tagPython = new Tags();
+        $tagPython->setName('Python');
+        $manager->persist($tagPython);
+
+        $tagHTML = new Tags();
+        $tagHTML->setName('HTML');
+        $manager->persist($tagHTML);
+
+        $tagCSS = new Tags();
+        $tagCSS->setName('CSS');
+        $manager->persist($tagCSS);
+
+        $course = new Courses();
+
+
+        $course_tag = new CourseTags();
+        $course_tag->
+
+        $chapter = new Chapters();
+
+
+
+
 
         $manager->flush();
     }

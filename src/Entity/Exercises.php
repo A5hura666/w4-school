@@ -32,12 +32,12 @@ class Exercises
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'exercises')]
-    private ?lessons $lesson_id = null;
+    private ?lessons $lesson = null;
 
     /**
      * @var Collection<int, Submissions>
      */
-    #[ORM\OneToMany(targetEntity: Submissions::class, mappedBy: 'exercice_id')]
+    #[ORM\OneToMany(targetEntity: Submissions::class, mappedBy: 'exercice')]
     private Collection $submissions;
 
     public function __construct()
@@ -112,12 +112,12 @@ class Exercises
 
     public function getLessonId(): ?lessons
     {
-        return $this->lesson_id;
+        return $this->lesson;
     }
 
-    public function setLessonId(?lessons $lesson_id): static
+    public function setLessonId(?lessons $lesson): static
     {
-        $this->lesson_id = $lesson_id;
+        $this->lesson = $lesson;
 
         return $this;
     }

@@ -14,11 +14,11 @@ class Submissions
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'submissions')]
-    private ?Exercises $exercice_id = null;
+    private ?Exercises $exercice = null;
 
     #[ORM\ManyToOne(inversedBy: 'submissions')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $student_id = null;
+    private ?User $student = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $submittedAt = null;
@@ -36,24 +36,24 @@ class Submissions
 
     public function getExerciceId(): ?Exercises
     {
-        return $this->exercice_id;
+        return $this->exercice;
     }
 
-    public function setExerciceId(?Exercises $exercice_id): static
+    public function setExercice(?Exercises $exercice): static
     {
-        $this->exercice_id = $exercice_id;
+        $this->exercice = $exercice;
 
         return $this;
     }
 
-    public function getStudentId(): ?User
+    public function getStudent(): ?User
     {
-        return $this->student_id;
+        return $this->student;
     }
 
-    public function setStudentId(?User $student_id): static
+    public function setStudentId(?User $student): static
     {
-        $this->student_id = $student_id;
+        $this->student = $student;
 
         return $this;
     }

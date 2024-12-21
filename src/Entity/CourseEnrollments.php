@@ -14,10 +14,10 @@ class CourseEnrollments
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'courseEnrollments')]
-    private ?Courses $coursesId = null;
+    private ?Courses $courses = null;
 
     #[ORM\ManyToOne(inversedBy: 'courseEnrollments')]
-    private ?User $studentId = null;
+    private ?User $student = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $anrolledAt = null;
@@ -27,26 +27,26 @@ class CourseEnrollments
         return $this->id;
     }
 
-    public function getCoursesId(): ?Courses
+    public function getCourses(): ?Courses
     {
-        return $this->coursesId;
+        return $this->courses;
     }
 
-    public function setCoursesId(?Courses $coursesId): static
+    public function setCourses(?Courses $courses): static
     {
-        $this->coursesId = $coursesId;
+        $this->courses = $courses;
 
         return $this;
     }
 
-    public function getStudentId(): ?User
+    public function getStudent(): ?User
     {
-        return $this->studentId;
+        return $this->student;
     }
 
-    public function setStudentId(?User $studentId): static
+    public function setStudent(?User $student): static
     {
-        $this->studentId = $studentId;
+        $this->student = $student;
 
         return $this;
     }

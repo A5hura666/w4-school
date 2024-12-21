@@ -30,24 +30,24 @@ class Courses
 
     #[ORM\ManyToOne(inversedBy: 'courses')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?user $teacher_id = null;
+    private ?user $teacher = null;
 
     /**
      * @var Collection<int, Chapters>
      */
-    #[ORM\OneToMany(targetEntity: Chapters::class, mappedBy: 'course_id')]
+    #[ORM\OneToMany(targetEntity: Chapters::class, mappedBy: 'course')]
     private Collection $chapters;
 
     /**
      * @var Collection<int, CourseEnrollments>
      */
-    #[ORM\OneToMany(targetEntity: CourseEnrollments::class, mappedBy: 'coursesId')]
+    #[ORM\OneToMany(targetEntity: CourseEnrollments::class, mappedBy: 'courses')]
     private Collection $courseEnrollments;
 
     /**
      * @var Collection<int, CourseTags>
      */
-    #[ORM\OneToMany(targetEntity: CourseTags::class, mappedBy: 'courseId')]
+    #[ORM\OneToMany(targetEntity: CourseTags::class, mappedBy: 'course')]
     private Collection $courseTags;
 
 
@@ -113,12 +113,12 @@ class Courses
 
     public function getTeacherId(): ?user
     {
-        return $this->teacher_id;
+        return $this->teacher;
     }
 
-    public function setTeacherId(?user $teacher_id): static
+    public function setTeacherId(?user $teacher): static
     {
-        $this->teacher_id = $teacher_id;
+        $this->teacher = $teacher;
 
         return $this;
     }

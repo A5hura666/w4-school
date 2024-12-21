@@ -33,12 +33,12 @@ class Lessons
 
     #[ORM\ManyToOne(inversedBy: 'lessons')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?chapters $chapter_id = null;
+    private ?chapters $chapter = null;
 
     /**
      * @var Collection<int, Exercises>
      */
-    #[ORM\OneToMany(targetEntity: Exercises::class, mappedBy: 'lesson_id')]
+    #[ORM\OneToMany(targetEntity: Exercises::class, mappedBy: 'lesson')]
     private Collection $exercises;
 
     /**
@@ -127,12 +127,12 @@ class Lessons
 
     public function getChapterId(): ?chapters
     {
-        return $this->chapter_id;
+        return $this->chapter;
     }
 
-    public function setChapterId(?chapters $chapter_id): static
+    public function setChapterId(?chapters $chapter): static
     {
-        $this->chapter_id = $chapter_id;
+        $this->chapter = $chapter;
 
         return $this;
     }

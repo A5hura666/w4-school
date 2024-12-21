@@ -14,10 +14,10 @@ class LessonProgress
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'lessonProgress')]
-    private ?Lessons $lessonId = null;
+    private ?Lessons $lesson = null;
 
     #[ORM\ManyToOne(inversedBy: 'lessonProgress')]
-    private ?User $studentId = null;
+    private ?User $student = null;
 
     #[ORM\Column(length: 255)]
     private ?string $status = null;
@@ -30,26 +30,26 @@ class LessonProgress
         return $this->id;
     }
 
-    public function getLessonId(): ?Lessons
+    public function getLesson(): ?Lessons
     {
-        return $this->lessonId;
+        return $this->lesson;
     }
 
-    public function setLessonId(?Lessons $lessonId): static
+    public function setLessonId(?Lessons $lesson): static
     {
-        $this->lessonId = $lessonId;
+        $this->lesson = $lesson;
 
         return $this;
     }
 
-    public function getStudentId(): ?User
+    public function getStudent(): ?User
     {
-        return $this->studentId;
+        return $this->student;
     }
 
-    public function setStudentId(?User $studentId): static
+    public function setStudentId(?User $student): static
     {
-        $this->studentId = $studentId;
+        $this->student = $student;
 
         return $this;
     }
