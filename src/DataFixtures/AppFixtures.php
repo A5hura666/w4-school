@@ -33,6 +33,15 @@ class AppFixtures extends Fixture
     {
         $faker = Faker\Factory::create();
 
+        $admin = new User();
+        $admin->setEmail('admin@gmail.com')
+            ->setLastName('admin')
+            ->setFirstName('admin')
+            ->setRoles(['ROLE_TEACHER']);
+        $hashedPassword = $this->passwordHasher->hashPassword($admin, 'admin');
+        $admin->setPassword($hashedPassword);
+        $manager->persist($admin);
+
         // Données des enseignants
         $teachers = [
             ['email' => 'teacher1@example.com', 'firstName' => 'Teacher1', 'lastName' => 'Test1'],
