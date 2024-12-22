@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ chapter.title }} - Chapitre{% endblock %}
+
+{% block content %}
+    <section class="max-w-4xl mx-auto mt-10 p-5">
+        <a href="{{ path('app_teachers_dashboard') }}" class="text-blue-500 hover:underline">Retour à la page d'accueil</a>
+    </section>
+    <div class="max-w-4xl mx-auto p-5 bg-white shadow-md rounded-lg">
+        <!-- Titre du Chapitre -->
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">{{ chapter.title }}</h1>
+
+        <!-- Description du Chapitre -->
+        <p class="text-gray-600 mb-6">{{ chapter.description }}</p>
+
+        <!-- Liste des leçons -->
+        <div class="mb-6">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Leçons</h2>
+            <ul class="space-y-4">
+                {% for lesson in chapter.lessons %}
+                    <li class="p-4 border border-gray-200 rounded-md bg-gray-50 hover:bg-gray-100">
+                        <h3 class="font-semibold text-lg text-gray-800">{{ lesson.title }}</h3>
+                        <p class="text-gray-500">{{ lesson.content|slice(0, 100) ~ '...' }}</p>
+                        <a href="{{ path('app_lessons_show', {'id': lesson.id}) }}" class="text-blue-500 hover:underline">Voir la leçon</a>
+                    </li>
+                {% else %}
+                    <p class="text-gray-500">Aucune leçon disponible pour ce chapitre.</p>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}

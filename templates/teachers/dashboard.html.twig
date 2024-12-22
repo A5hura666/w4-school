@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello TeachersController!{% endblock %}
+
+{% block content %}
+    <h1>Connecté en tant que {{ user.firstName }}</h1>
+    <main>
+        <section>
+            <h2>Mes cours : </h2>
+            <div id="accordion-collapse" data-accordion="collapse" class="w-1/2">
+                {% for course in courses %}
+                    <h2 id="accordion-collapse-heading-{{ course.id }}">
+                        <button type="button"
+                                class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3"
+                                data-accordion-target="#accordion-collapse-body-{{ course.id }}"
+                                aria-expanded="false"
+                                aria-controls="accordion-collapse-body-{{ course.id }}"
+                                >
+                            <span>{{ course.title }}</span>
+                            <section class="flex gap-3">
+                                <img src="{{ asset('images/eye.svg') }}" alt="Eye icon" class="w-6 h-6 h-20 dark:block">
+                                <img src="{{ asset('images/eye-white.svg') }}" alt="Eye icon" class="w-6 h-6 h-20 hidden dark:block">
+
+                                <img src="{{ asset('images/pencil.svg') }}" alt="Edit icon" class="w-6 h-6 h-20 ">
+                                <svg data-accordion-icon class="w-3 h-3 rotate-0 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5"/>
+                                </svg>
+                            </section>
+
+                        </button>
+                    </h2>
+                    <div id="accordion-collapse-body-{{ course.id }}"
+                         class="hidden"
+                         aria-labelledby="accordion-collapse-heading-{{ course.id }}">
+                        <div class="p-5 border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-900">
+                            <p class="mb-2 text-gray-500 dark:text-gray-400">{{ course.description }}</p>
+                            Liste des chapitres:
+                            {% if course.chapters is not empty %}
+                                <ul class="list-disc list-inside mt-4">
+                                    {% for chapter in course.chapters %}
+                                        <li class="text-gray-500 dark:text-gray-400 w-full flex justify-between">
+                                            {{ chapter.position}} {{ chapter.title }}: {{ chapter.description|split(' ')[:10]|join(' ') }} ...
+                                            <section class="flex w-12 gap-3">
+                                                <a href="{{ path('app_chapter_show', {'id': chapter.id}) }}" class="w-12 h-12">
+                                                    <img src="{{ asset('images/eye.svg') }}" alt="Eye icon" class="dark:block">
+                                                    <img src="{{ asset('images/eye-white.svg') }}" alt="Eye icon" class="hidden dark:block">
+                                                </a>
+                                                <a href="{{ path('app_chapter_edit', {'id': chapter.id}) }}" class="w-12 h-12">
+                                                    <img src="{{ asset('images/pencil.svg') }}" alt="Edit icon" class=" ">
+                                                </a>
+                                            </section>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="text-gray-500 dark:text-gray-400">No chapters available for this course.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+        </section>
+
+    </main>
+
+
+{% endblock %}

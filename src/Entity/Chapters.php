@@ -5,11 +5,19 @@ namespace App\Entity;
 use App\Repository\ChaptersRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\DateTimeImmutableType;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 #[ORM\Entity(repositoryClass: ChaptersRepository::class)]
-class Chapters
+class Chapters extends AbstractType
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -32,7 +40,7 @@ class Chapters
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'chapters')]
-    private ?courses $course = null;
+    private ?Courses $course = null;
 
     /**
      * @var Collection<int, Lessons>
@@ -110,12 +118,12 @@ class Chapters
         return $this;
     }
 
-    public function getCourseId(): ?courses
+    public function getCourseId(): ?Courses
     {
         return $this->course;
     }
 
-    public function setCourseId(?courses $course): static
+    public function setCourseId(?Courses $course): static
     {
         $this->course = $course;
 
@@ -150,5 +158,32 @@ class Chapters
         }
 
         return $this;
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add('title', TextType::class)
+            ->add('description', TextType::class)
+            ->add('position', IntegerType::class)
+            ->add('createdAt', DateTimeType::class, [
+                'label' => 'Date de création',
+                'widget' => 'single_text', // Affichage d'une seule boîte de texte pour la date
+                'required' => true,
+                'input' => 'datetime_immutable', // Spécifie que la donnée attendue est de type DateTimeImmutable
+            ])
+            ->add('updatedAt', DateTimeType::class, [
+                'label' => 'Date de création',
+                'widget' => 'single_text', // Affichage d'une seule boîte de texte pour la date
+                'required' => false,
+                'input' => 'datetime_immutable', // Spécifie que la donnée attendue est de type DateTimeImmutable
+            ]);
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => Chapters::class,
+        ]);
     }
 }

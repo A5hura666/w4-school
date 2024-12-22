@@ -33,7 +33,7 @@ class Lessons
 
     #[ORM\ManyToOne(inversedBy: 'lessons')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?chapters $chapter = null;
+    private ?Chapters $chapter = null;
 
     /**
      * @var Collection<int, Exercises>
@@ -125,12 +125,12 @@ class Lessons
         return $this;
     }
 
-    public function getChapterId(): ?chapters
+    public function getChapterId(): ?Chapters
     {
         return $this->chapter;
     }
 
-    public function setChapterId(?chapters $chapter): static
+    public function setChapterId(?Chapters $chapter): static
     {
         $this->chapter = $chapter;
 
@@ -179,7 +179,7 @@ class Lessons
     {
         if (!$this->lessonMedia->contains($lessonMedium)) {
             $this->lessonMedia->add($lessonMedium);
-            $lessonMedium->setLessonId($this);
+            $lessonMedium->setLesson($this);
         }
 
         return $this;
@@ -189,8 +189,8 @@ class Lessons
     {
         if ($this->lessonMedia->removeElement($lessonMedium)) {
             // set the owning side to null (unless already changed)
-            if ($lessonMedium->getLessonId() === $this) {
-                $lessonMedium->setLessonId(null);
+            if ($lessonMedium->getLesson() === $this) {
+                $lessonMedium->setLesson(null);
             }
         }
 
@@ -219,7 +219,7 @@ class Lessons
     {
         if ($this->lessonProgress->removeElement($lessonProgress)) {
             // set the owning side to null (unless already changed)
-            if ($lessonProgress->getLessonId() === $this) {
+            if ($lessonProgress->getLesson() === $this) {
                 $lessonProgress->setLessonId(null);
             }
         }

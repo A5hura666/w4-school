@@ -23,3 +23,18 @@ notifications
 DoctrineExtensions sortTable
 
 webAssemblyPHP 
+
+
+## lancemenent du projet
+
+```bash
+composer install
+```
+
+```bash
+symfony server:start
+```
+
+```bash
+php bin/console tailwind:build --watch
+```

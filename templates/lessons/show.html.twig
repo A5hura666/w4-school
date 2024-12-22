@@ -1,0 +1,28 @@
+{# templates/lesson/show.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ lesson.title }}{% endblock %}
+
+{% block content %}
+    <div class="container mx-auto px-4 py-6">
+        <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
+            <h1 class="text-3xl font-bold text-gray-800">{{ lesson.title }}</h1>
+            <p class="text-sm text-gray-500 mb-4">Publié le {{ lesson.createdAt|date('d F Y') }} par {{ lesson.getChapterId.getCourseId.getTeacherId.getFirstName }} {{ lesson.getChapterId.getCourseId.getTeacherId.getLastName }}</p>
+            <p class="text-sm text-gray-500 mb-4">
+                <a href="{{ path('app_courses_show', {'id': lesson.getChapterId.getCourseId.id}) }}" class="text-blue-500 hover:underline">
+                    {{ lesson.getChapterId.getCourseId.title }}</a>
+                >
+                <a href="{{ path('app_chapter_show', {'id': lesson.getChapterId.id}) }}" class="text-blue-500 hover:underline">
+                    {{ lesson.getChapterId.title }}
+                </a>
+            </p>
+
+            <div class="prose max-w-none">
+                <p>{{ lesson.content }}</p>
+            </div>
+
+
+        </div>
+    </div>
+{% endblock %}
