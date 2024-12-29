@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier le chapitre - {{ chapter.title }}{% endblock %}
+
+{% block content %}
+    <div class="p-4 sm:ml-64">
+        <div class="p-4 mt-14">
+            <h2 class="text-4xl font-extrabold dark:text-white">Modifier le Chapitre</h2>
+            <p class="my-4 text-lg text-gray-500">Id est ut et enim. Ut perspiciatis molestiae volup...</p>
+
+            <div class="p-4 mt-6 bg-white shadow-md rounded-lg">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Modifier le Chapitre : {{ chapter.title }}</h1>
+
+                <!-- Formulaire de modification -->
+                <form method="POST" action="{{ path('teacher_chapters_edit', {'id': chapter.id}) }}"
+                      enctype="multipart/form-data">
+                    {{ form_start(form) }}
+
+                    <!-- Champ Titre -->
+                    <div class="mb-4">
+                        {{ form_label(form.title, 'Titre du chapitre', {'class': 'block text-gray-700 font-medium'}) }}
+                        <div class="mt-1">
+                            {{ form_widget(form.title, {'attr': {'class': 'form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'}}) }}
+                        </div>
+                        {{ form_errors(form.title) }}
+                    </div>
+
+                    <!-- Champ Description -->
+                    <div class="mb-4">
+                        {{ form_label(form.description, 'Description du chapitre', {'class': 'block text-gray-700 font-medium'}) }}
+                        <div class="mt-1">
+                            {{ form_widget(form.description, {'attr': {'class': 'form-textarea mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'}}) }}
+                        </div>
+                        {{ form_errors(form.description) }}
+                    </div>
+
+                    <!-- Affichage des dates -->
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-medium">Date de création</label>
+                        <div class="mt-1">
+                            <input type="text"
+                                   value="{{ chapter.createdAt ? chapter.createdAt|date('Y-m-d H:i:s') : 'N/A' }}"
+                                   class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                   readonly />
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-medium">Date de mise à jour</label>
+                        <div class="mt-1">
+                            <input type="text"
+                                   value="{{ chapter.updatedAt ? chapter.updatedAt|date('Y-m-d H:i:s') : 'N/A' }}"
+                                   class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                   readonly />
+                        </div>
+                    </div>
+
+                    <!-- Bouton de soumission -->
+                    <div class="flex justify-end">
+                        <button type="submit"
+                                class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            Enregistrer les modifications
+                        </button>
+                    </div>
+
+                    {{ form_end(form) }}
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Chapitres{% endblock %}
+
+{% block content %}
+    <div class="p-4 sm:ml-64">
+        <div class="p-4 mt-14">
+            <h2 class="text-4xl font-extrabold dark:text-white">Liste des Chapitres</h2>
+            <p class="my-4 text-lg text-gray-500">Vous retrouverez ici la liste de tous vos chapitres pour le cours sélectionné.</p>
+
+            <!-- Bouton de création -->
+            <div class="mb-6">
+                <a href="{{ path('teacher_chapters_create', {'courseId': courseId}) }}"
+                   class="inline-block px-4 py-2 text-white bg-blue-600 rounded-md shadow hover:bg-blue-500">
+                    + Créer un nouveau chapitre
+                </a>
+            </div>
+
+            <section class="mt-8">
+                <table class="w-full text-left border-collapse border border-gray-300 dark:border-gray-600">
+                    <thead class="bg-gray-100 dark:bg-gray-700">
+                    <tr>
+                        <th class="p-2 w-1/4 border border-gray-300 text-white bg-gray-600 dark:text-white dark:border-gray-600">
+                            Titre du chapitre
+                        </th>
+                        <th class="p-2 w-1/4 border border-gray-300 text-white bg-gray-600 dark:text-white dark:border-gray-600">
+                            Description
+                        </th>
+                        <th class="p-2 w-1/6 border border-gray-300 text-white bg-gray-600 dark:text-white dark:border-gray-600">
+                            Date de création
+                        </th>
+                        <th class="p-2 w-1/6 border border-gray-300 text-white bg-gray-600 dark:text-white dark:border-gray-600">
+                            Dernière mise à jour
+                        </th>
+                        <th class="p-2 w-1/4 border border-gray-300 text-white bg-gray-600 dark:text-white dark:border-gray-600">
+                            Actions
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for chapter in chapters %}
+                        <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700" onclick="toggleLessons({{ chapter.id }})">
+                            <td class="p-2 border border-gray-300 dark:border-gray-600 font-medium text-gray-800 dark:text-gray-200">
+                                {{ chapter.title }}
+                            </td>
+                            <td class="p-2 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400">
+                                {{ chapter.description|slice(0, 50) ~ (chapter.description|length > 50 ? '...' : '') }}
+                            </td>
+                            <td class="p-2 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400">
+                                {{ chapter.createdAt ? chapter.createdAt|date('d/m/Y H:i') : 'Pas de date disponible' }}
+                            </td>
+                            <td class="p-2 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400">
+                                {{ chapter.updatedAt ? chapter.updatedAt|date('d/m/Y H:i') : 'N/A' }}
+                            </td>
+                            <td class="p-2 border border-gray-300 dark:border-gray-600 text-center">
+                                <a href="{{ path('teacher_lessons_create', {'chapterId': chapter.id}) }}"
+                                   class="inline-block mx-1 p-2 bg-green-500 hover:bg-green-600 text-white rounded-lg" onclick="event.stopPropagation();">
+                                    <img src="{{ asset('images/plus-white.svg') }}" alt="Ajouter" class="w-5 h-5">
+                                </a>
+                                <a href="{{ path('teacher_chapters_edit', {'id': chapter.id}) }}"
+                                   class="inline-block mx-1 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg" onclick="event.stopPropagation();">
+                                    <img src="{{ asset('images/pencil-white.svg') }}" alt="Modifier" class="w-5 h-5">
+                                </a>
+                                <a href="{{ path('teacher_chapters_delete', {'id': chapter.id}) }}"
+                                   class="inline-block mx-1 p-2 bg-red-700 hover:bg-red-800 text-white rounded-lg"
+                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce cours ?');">
+                                    <img src="{{ asset('images/trash-white.svg') }}" alt="Supprimer" class="w-5 h-5">
+                                </a>
+                            </td>
+                        </tr>
+
+                        {% if lessonsByChapter[chapter.id] is not empty %}
+                            {% for lesson in lessonsByChapter[chapter.id] %}
+                                <tr class="bg-gray-100 dark:bg-gray-600 hidden" data-chapter-id="{{ chapter.id }}">
+                                    <td class="p-2 border border-gray-300 dark:border-gray-500">
+                                        {{ loop.index }}. {{ lesson.title }}
+                                    </td>
+                                    <td class="p-2 border border-gray-300 dark:border-gray-500">
+                                        {{ lesson.content|slice(0, 50) ~ (lesson.content|length > 50 ? '...' : '') }}
+                                    </td>
+                                    <td class="p-2 border border-gray-300 dark:border-gray-500">
+                                        {{ lesson.createdAt ? lesson.createdAt|date('d/m/Y H:i') : 'Pas de date disponible' }}
+                                    </td>
+                                    <td class="p-2 border border-gray-300 dark:border-gray-500">
+                                        {{ lesson.updatedAt ? lesson.updatedAt|date('d/m/Y H:i') : 'N/A' }}
+                                    </td>
+                                    <td class="p-2 border border-gray-300 dark:border-gray-500 text-center">
+                                        <a href="{{ path('teacher_lessons_edit', {'id': lesson.id}) }}"
+                                           class="inline-block mx-1 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg" onclick="event.stopPropagation();">
+                                            <img src="{{ asset('images/pencil-white.svg') }}" alt="Modifier" class="w-5 h-5">
+                                        </a>
+                                        <a href="{{ path('teacher_lessons_delete', {'id': lesson.id}) }}"
+                                           class="inline-block mx-1 p-2 bg-red-700 hover:bg-red-800 text-white rounded-lg"
+                                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce cours ?');">
+                                            <img src="{{ asset('images/trash-white.svg') }}" alt="Supprimer" class="w-5 h-5">
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr class="bg-gray-100 dark:bg-gray-600">
+                                    <td colspan="5" class="p-2 text-gray-600 dark:text-gray-400">
+                                        Aucune leçon disponible.
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="p-2 text-center text-gray-600 dark:text-gray-400">
+                                Aucun chapitre disponible.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        function toggleLessons(chapterId) {
+            const lessonRows = document.querySelectorAll(`tr[data-chapter-id='${chapterId}']`);
+            lessonRows.forEach(row => {
+                row.classList.toggle('hidden');
+            });
+        }
+    </script>
+{% endblock %}

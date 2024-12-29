@@ -4,7 +4,7 @@
 
 {% block content %}
     <section class="max-w-4xl mx-auto mt-10 p-5">
-        <a href="{{ path('app_teachers_dashboard') }}" class="text-blue-500 hover:underline">Retour à la page d'accueil</a>
+        <a href="{{ path('students_index') }}" class="text-blue-500 hover:underline">Retour à la page d'accueil</a>
     </section>
     <div class="max-w-4xl mx-auto p-5 bg-white shadow-md rounded-lg">
         <!-- Titre du Chapitre -->
@@ -20,8 +20,10 @@
                 {% for lesson in chapter.lessons %}
                     <li class="p-4 border border-gray-200 rounded-md bg-gray-50 hover:bg-gray-100">
                         <h3 class="font-semibold text-lg text-gray-800">{{ lesson.title }}</h3>
-                        <p class="text-gray-500">{{ lesson.content|slice(0, 100) ~ '...' }}</p>
-                        <a href="{{ path('app_lessons_show', {'id': lesson.id}) }}" class="text-blue-500 hover:underline">Voir la leçon</a>
+                        <p class="text-gray-500">
+                            {{ lesson.content|striptags|slice(0, 100) ~ '...' }}
+                        </p>
+                        <a href="{{ path('student_lessons_show', {'id': lesson.id}) }}" class="text-blue-500 hover:underline">Voir la leçon</a>
                     </li>
                 {% else %}
                     <p class="text-gray-500">Aucune leçon disponible pour ce chapitre.</p>

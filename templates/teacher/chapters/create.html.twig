@@ -1,0 +1,50 @@
+{# templates/teacher/chapters/create.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer un Nouveau Chapitre{% endblock %}
+
+{% block content %}
+    <div class="p-4 sm:ml-64">
+        <div class="p-4 mt-14">
+            <h2 class="text-4xl font-extrabold dark:text-white">Créer un Nouveau Chapitre</h2>
+            <p class="my-4 text-lg text-gray-500">Veuillez remplir les informations suivantes pour créer un nouveau chapitre.</p>
+
+            <div class="p-4 mt-6 bg-white shadow-md rounded-lg">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Nouveau Chapitre</h1>
+
+                <!-- Formulaire de création -->
+                <form method="POST" action="{{ path('teacher_chapters_create', {'courseId': courseId}) }}" enctype="multipart/form-data">
+                    {{ form_start(form) }}
+
+                    <!-- Champ Titre -->
+                    <div class="mb-4">
+                        {{ form_label(form.title, 'Titre du chapitre', {'class': 'block text-gray-700 font-medium'}) }}
+                        <div class="mt-1">
+                            {{ form_widget(form.title, {'attr': {'class': 'form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'}}) }}
+                        </div>
+                        {{ form_errors(form.title) }}
+                    </div>
+
+                    <!-- Champ Description -->
+                    <div class="mb-4">
+                        {{ form_label(form.description, 'Description du chapitre', {'class': 'block text-gray-700 font-medium'}) }}
+                        <div class="mt-1">
+                            {{ form_widget(form.description, {'attr': {'class': 'form-textarea mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'}}) }}
+                        </div>
+                        {{ form_errors(form.description) }}
+                    </div>
+
+                    <!-- Bouton de soumission -->
+                    <div class="flex justify-end">
+                        <button type="submit"
+                                class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            Créer le Chapitre
+                        </button>
+                    </div>
+
+                    {{ form_end(form) }}
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

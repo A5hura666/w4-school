@@ -1,14 +1,15 @@
 <div>
-    <nav class="border-gray-200 px-4 lg:px-6 py-4">
+    <nav class="border-gray-200 px-3 py-3 lg:px-5">
         <div class="flex justify-between items-center max-w-screen-xl mx-auto">
             <a href="{{ path('app_index') }}" class="flex items-center">
                 <img src="{{ asset('images/logo.svg') }}" alt="W4 Logo" class="mr-3 h-8 sm:h-12 dark:hidden"/>
-                <img src="" alt="W4 Logo"
+                <img src="{{ asset('images/logo-white.svg') }}" alt="W4 Logo"
                      class="mr-3 h-8 sm:h-12 hidden dark:block"/>
                 <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
                     W4-School
                 </span>
             </a>
+
             <button data-collapse-toggle="navbar-responsive" type="button"
                     class="inline-flex items-center p-2 text-gray-500 rounded-lg lg:hidden hover:bg-gray-100
                            focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400

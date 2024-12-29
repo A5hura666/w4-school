@@ -4,16 +4,24 @@
 {% include 'base/head.html.twig' %}
 
 <body class="min-h-screen flex flex-col">
-    <header class="bg-white dark:bg-gray-800 sticky top-0 z-50 shadow-md">
-        {% include 'base/header.html.twig' %}
-    </header>
+<header id="{% if is_dashboard is defined and is_dashboard %}logo-sidebar{% else %}default-header{% endif %}">
+    {% if is_dashboard is defined and is_dashboard %}
+        {% include 'base/header-dashboard.html.twig' %}
+    {% else %}
+        <div class="bg-white dark:bg-gray-800 sticky top-0 z-50 shadow-md">
+            {% include 'base/header.html.twig' %}
+        </div>
+    {% endif %}
+</header>
 
-    <main class="flex-grow bg-gray-50 dark:bg-gray-900">
-        {% block content %}{% endblock %}
-    </main>
+<main class="{% if is_dashboard is defined and is_dashboard %}dashboard-main bg-gray-100 dark:bg-gray-900{% else %}flex-grow bg-gray-50 dark:bg-gray-900{% endif %}">
+    {% block content %}{% endblock %}
+</main>
 
-    <footer class="bg-white dark:bg-gray-800">
+{% if not (is_dashboard is defined and is_dashboard) %}
+    <footer class="bg-white dark:bg-gray-800 z-40">
         {% include 'base/footer.html.twig' %}
     </footer>
+{% endif %}
 </body>
 </html>

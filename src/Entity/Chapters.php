@@ -159,31 +159,4 @@ class Chapters extends AbstractType
 
         return $this;
     }
-
-    public function buildForm(FormBuilderInterface $builder, array $options): void
-    {
-        $builder
-            ->add('title', TextType::class)
-            ->add('description', TextType::class)
-            ->add('position', IntegerType::class)
-            ->add('createdAt', DateTimeType::class, [
-                'label' => 'Date de création',
-                'widget' => 'single_text', // Affichage d'une seule boîte de texte pour la date
-                'required' => true,
-                'input' => 'datetime_immutable', // Spécifie que la donnée attendue est de type DateTimeImmutable
-            ])
-            ->add('updatedAt', DateTimeType::class, [
-                'label' => 'Date de création',
-                'widget' => 'single_text', // Affichage d'une seule boîte de texte pour la date
-                'required' => false,
-                'input' => 'datetime_immutable', // Spécifie que la donnée attendue est de type DateTimeImmutable
-            ]);
-    }
-
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults([
-            'data_class' => Chapters::class,
-        ]);
-    }
 }
