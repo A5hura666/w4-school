@@ -16,6 +16,20 @@ class ChaptersRepository extends ServiceEntityRepository
         parent::__construct($registry, Chapters::class);
     }
 
+    // src/Repository/ChaptersRepository.php
+
+    public function findChaptersWithPositionGreaterThanOrEqual(int $position, int $courseId)
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.position >= :position')
+            ->andWhere('c.course = :courseId')
+            ->setParameter('position', $position)
+            ->setParameter('courseId', $courseId)
+            ->orderBy('c.position', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Chapters[] Returns an array of Chapters objects
     //     */
