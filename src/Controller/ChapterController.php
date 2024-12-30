@@ -37,7 +37,7 @@ class ChapterController extends AbstractController
     public function list(ChaptersRepository $chaptersRepository, LessonsRepository $lessonsRepository, int $courseId): Response
     {
         // Lister les chapitres pour un cours
-        $chapters = $chaptersRepository->findBy(['course' => $courseId]);
+        $chapters = $chaptersRepository->findBy(['course' => $courseId], ['position' => 'ASC']);
 
         // Lister les leçons pour chaque chapitre
         $lessonsByChapter = [];
@@ -54,7 +54,7 @@ class ChapterController extends AbstractController
     }
 
     #[Route('/teacher/chapters/{courseId}/create', name: 'teacher_chapters_create')]
-    public function create(int $courseId, Request $request, EntityManagerInterface $em): Response
+    public function create(int $courseId, Request $request, EntityManagerInterface $em, ChaptersRepository $chaptersRepository ): Response
     {
         $chapter = new Chapters();
         $form = $this->createForm(ChaptersType::class, $chapter);
@@ -65,6 +65,16 @@ class ChapterController extends AbstractController
             if ($course) {
                 $chapter->setCourseId($course);
                 $chapter->setCreatedAt(new \DateTimeImmutable());
+                $chapter->setUpdatedAt(new \DateTimeImmutable());
+
+                // Check for position conflicts
+                $position = $chapter->getPosition();
+                $conflictingChapters = $chaptersRepository->findChaptersWithPositionGreaterThanOrEqual($position, $courseId);
+                foreach ($conflictingChapters as $conflictingChapter) {
+                    $conflictingChapter->setPosition($conflictingChapter->getPosition() + 1);
+                    $em->persist($conflictingChapter);
+                }
+
                 $em->persist($chapter);
                 $em->flush();
 
@@ -86,17 +96,27 @@ class ChapterController extends AbstractController
     {
         $chapter = $chaptersRepository->find($id);
 
-        if (!$chapter)
-        {
+        if (!$chapter) {
             throw $this->createNotFoundException('Le chapitre n\'existe pas');
         }
 
         $form = $this->createForm(ChaptersType::class, $chapter);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid())
-        {
+        if ($form->isSubmitted() && $form->isValid()) {
             $chapter->setUpdatedAt(new \DateTimeImmutable());
+
+            // Check for position conflicts
+            $position = $chapter->getPosition();
+            $courseId = $chapter->getCourseId()->getId();
+            $conflictingChapters = $chaptersRepository->findChaptersWithPositionGreaterThanOrEqual($position, $courseId);
+            foreach ($conflictingChapters as $conflictingChapter) {
+                if ($conflictingChapter->getId() !== $chapter->getId()) {
+                    $conflictingChapter->setPosition($conflictingChapter->getPosition() + 1);
+                    $em->persist($conflictingChapter);
+                }
+            }
+
             $em->persist($chapter);
             $em->flush();
 
@@ -109,7 +129,7 @@ class ChapterController extends AbstractController
         }
 
         return $this->render('teacher/chapters/edit.html.twig', [
-            'form'    => $form->createView(),
+            'form' => $form->createView(),
             'chapter' => $chapter,
             'is_dashboard' => true,
         ]);
