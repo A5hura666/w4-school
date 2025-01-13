@@ -7,6 +7,7 @@
 <header id="{% if is_dashboard is defined and is_dashboard %}logo-sidebar{% else %}default-header{% endif %}">
     {% if is_dashboard is defined and is_dashboard %}
         {% include 'base/header-dashboard.html.twig' %}
+        {% elseif is_dashboard is defined %}
     {% else %}
         <div class="bg-white dark:bg-gray-800 sticky top-0 z-50 shadow-md">
             {% include 'base/header.html.twig' %}

@@ -6,6 +6,7 @@ use App\Entity\Courses;
 use App\Form\CoursesType;
 use App\Repository\ChaptersRepository;
 use App\Repository\CoursesRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,8 +35,8 @@ class CoursesController extends AbstractController
         ]);
     }
 
-    #[Route('/teacher/courses/create', name: 'teacher_courses_create')]
-    public function create(Request $request, EntityManagerInterface $em): Response
+    #[Route('/teacher/courses/create', name: 'courses_create')]
+    public function create(Request $request, EntityManagerInterface $em, TeachersController $teachersController): Response
     {
         $course = new Courses();
         $form = $this->createForm(CoursesType::class, $course);
@@ -49,6 +50,9 @@ class CoursesController extends AbstractController
             $em->persist($course);
             $em->flush();
 
+            if (in_array('ROLE_ADMIN',$teachersController->getUser()->getRoles())) {
+                return $this->redirectToRoute('admin_courses');
+            }
             return $this->redirectToRoute('teacher_courses_list');
         }
 
@@ -56,6 +60,9 @@ class CoursesController extends AbstractController
             'form' => $form->createView(),
             'is_dashboard' => true,
         ]);
+
+
+
     }
 
     #[Route("/teacher/courses/{id}/edit", name: "teacher_courses_edit")]

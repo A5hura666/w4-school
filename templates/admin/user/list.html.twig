@@ -1,0 +1,184 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+
+<div class="p-4 sm:ml-64">
+    <div class="p-4 mt-14">
+    {% if userType == 'student' or userType == 'user' %}
+        <h2 class="text-4xl font-extrabold dark:text-white">Liste des étudiants</h2>
+        <section class="mt-8">
+            <table class="w-full text-left border-collapse border border-gray-300 dark:border-gray-600">
+                <thead class="bg-gray-100 dark:bg-gray-700">
+                <tr>
+                    <th class="p-2 w-1/4 border border-gray-300 text-white bg-gray-600 dark:text-white dark:border-gray-600">
+                        Nom de l'étudiants
+                    </th>
+                    <th class="p-2 w-1/4 border border-gray-300 text-white bg-gray-600 dark:text-white dark:border-gray-600">
+                        Prénoms de l'étudiants
+                    </th>
+                    <th class="p-2 w-1/6 border border-gray-300 text-white bg-gray-600 dark:text-white dark:border-gray-600">
+                        email de l'étudiants
+                    </th>
+                    <th class="p-2 w-1/4 border border-gray-300 text-white bg-gray-600 dark:text-white dark:border-gray-600">
+                        Actions
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for student in students %}
+                    <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <td class="p-2 border border-gray-300 dark:border-gray-600 font-medium text-gray-800 dark:text-gray-200">
+                            {{ student.lastName }}
+                        </td>
+                        <td class="p-2 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400">
+                            {{ student.firstName }}
+                        </td>
+                        <td class="p-2 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400">
+                            {{ student.email }}
+                        </td>
+                        <td class="p-2 border border-gray-300 dark:border-gray-600 text-center">
+                            <a href="{{ path('admin_users_detail', {'id': student.id}) }}"
+                               class="inline-block mx-1 p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg">
+                                <img src="{{ asset('images/eye-white.svg') }}" alt="Voir" class="w-5 h-5">
+                            </a>
+                            <a href="{{ path('admin_users_edit', {'id': student.id}) }}"
+                               class="inline-block mx-1 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg">
+                                <img src="{{ asset('images/pencil-white.svg') }}" alt="Modifier" class="w-5 h-5">
+                            </a>
+                            <a href="{{ path('admin_users_delete', {'id': student.id}) }}"
+                               class="inline-block mx-1 p-2 bg-red-700 hover:bg-red-800 text-white rounded-lg"
+                               onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce cours ?');">
+                                <img src="{{ asset('images/trash-white.svg') }}" alt="Supprimer" class="w-5 h-5">
+                            </a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="p-3 text-center text-gray-600 dark:text-gray-400">
+                            Aucun Étudiants disponible.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    {% endif %}
+    {% if userType == 'teacher' or userType == 'user' %}
+        <h2 class="text-4xl font-extrabold dark:text-white">Liste des Enseignants</h2>
+        <section class="mt-8">
+            <table class="w-full text-left border-collapse border border-gray-300 dark:border-gray-600">
+                <thead class="bg-gray-100 dark:bg-gray-700">
+                <tr>
+                    <th class="p-2 w-1/4 border border-gray-300 text-white bg-gray-600 dark:text-white dark:border-gray-600">
+                        Nom de l'étudiants
+                    </th>
+                    <th class="p-2 w-1/4 border border-gray-300 text-white bg-gray-600 dark:text-white dark:border-gray-600">
+                        Prénoms de l'étudiants
+                    </th>
+                    <th class="p-2 w-1/6 border border-gray-300 text-white bg-gray-600 dark:text-white dark:border-gray-600">
+                        email de l'étudiants
+                    </th>
+                    <th class="p-2 w-1/4 border border-gray-300 text-white bg-gray-600 dark:text-white dark:border-gray-600">
+                        Actions
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for teacher in teachers %}
+                    <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <td class="p-2 border border-gray-300 dark:border-gray-600 font-medium text-gray-800 dark:text-gray-200">
+                            {{ teacher.lastName }}
+                        </td>
+                        <td class="p-2 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400">
+                            {{ teacher.firstName }}
+                        </td>
+                        <td class="p-2 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400">
+                            {{ teacher.email }}
+                        </td>
+                        <td class="p-2 border border-gray-300 dark:border-gray-600 text-center">
+                            <a href="{{ path('admin_users_detail', {'id': teacher.id}) }}"
+                               class="inline-block mx-1 p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg">
+                                <img src="{{ asset('images/eye-white.svg') }}" alt="Voir" class="w-5 h-5">
+                            </a>
+                            <a href="{{ path('admin_users_edit', {'id': teacher.id}) }}"
+                               class="inline-block mx-1 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg">
+                                <img src="{{ asset('images/pencil-white.svg') }}" alt="Modifier" class="w-5 h-5">
+                            </a>
+                            <a href="{{ path('admin_users_delete', {'id': teacher.id}) }}"
+                               class="inline-block mx-1 p-2 bg-red-700 hover:bg-red-800 text-white rounded-lg"
+                               onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce cours ?');">
+                                <img src="{{ asset('images/trash-white.svg') }}" alt="Supprimer" class="w-5 h-5">
+                            </a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="p-3 text-center text-gray-600 dark:text-gray-400">
+                            Aucun Enseignants disponible.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    {% endif %}
+    {% if userType == 'admin' or userType == 'user' %}
+        <h2 class="text-4xl font-extrabold dark:text-white">Liste des Administrateurs</h2>
+        <section class="mt-8">
+            <table class="w-full text-left border-collapse border border-gray-300 dark:border-gray-600">
+                <thead class="bg-gray-100 dark:bg-gray-700">
+                <tr>
+                    <th class="p-2 w-1/4 border border-gray-300 text-white bg-gray-600 dark:text-white dark:border-gray-600">
+                        Nom de l'étudiants
+                    </th>
+                    <th class="p-2 w-1/4 border border-gray-300 text-white bg-gray-600 dark:text-white dark:border-gray-600">
+                        Prénoms de l'étudiants
+                    </th>
+                    <th class="p-2 w-1/6 border border-gray-300 text-white bg-gray-600 dark:text-white dark:border-gray-600">
+                        email de l'étudiants
+                    </th>
+                    <th class="p-2 w-1/4 border border-gray-300 text-white bg-gray-600 dark:text-white dark:border-gray-600">
+                        Actions
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for admin in admins %}
+                    <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <td class="p-2 border border-gray-300 dark:border-gray-600 font-medium text-gray-800 dark:text-gray-200">
+                            {{ admin.lastName }}
+                        </td>
+                        <td class="p-2 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400">
+                            {{ admin.firstName }}
+                        </td>
+                        <td class="p-2 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400">
+                            {{ admin.email }}
+                        </td>
+                        <td class="p-2 border border-gray-300 dark:border-gray-600 text-center">
+                            <a href="{{ path('admin_users_detail', {'id': admin.id}) }}"
+                               class="inline-block mx-1 p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg">
+                                <img src="{{ asset('images/eye-white.svg') }}" alt="Voir" class="w-5 h-5">
+                            </a>
+                            <a href="{{ path('admin_users_edit', {'id': admin.id}) }}"
+                               class="inline-block mx-1 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg">
+                                <img src="{{ asset('images/pencil-white.svg') }}" alt="Modifier" class="w-5 h-5">
+                            </a>
+                            <a href="{{ path('admin_users_delete', {'id': admin.id}) }}"
+                               class="inline-block mx-1 p-2 bg-red-700 hover:bg-red-800 text-white rounded-lg"
+                               onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce cours ?');">
+                                <img src="{{ asset('images/trash-white.svg') }}" alt="Supprimer" class="w-5 h-5">
+                            </a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="p-3 text-center text-gray-600 dark:text-gray-400">
+                            Aucun Administrateurs disponible.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    {% endif %}
+{% endblock %}
