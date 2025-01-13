@@ -71,39 +71,59 @@ class AdminController extends AbstractController
                 'teachers' => $teachers
             ]);
         }elseif ($userType == 'student') {
-            $students = $userRepository->findByRole('ROLE_STUDENT');
+            $users = $userRepository->findByRole('ROLE_STUDENT');
             return $this->render('admin/user/list.html.twig', [
                 'controller_name' => 'AdminController',
                 'is_dashboard' => true,
                 'is_admin' => true,
                 'userType' => $userType,
-                'students' => $students
+                'students' => $users
             ]);
         }elseif ($userType == 'admin') {
-            $admins = $userRepository->findByRole('ROLE_ADMIN');
+            $users = $userRepository->findByRole('ROLE_ADMIN');
             return $this->render('admin/user/list.html.twig', [
                 'controller_name' => 'AdminController',
                 'is_dashboard' => true,
                 'is_admin' => true,
                 'userType' => $userType,
-                'admins' => $admins
+                'admins' => $users
             ]);
         }else{
-            $admins = $userRepository->findByRole('ROLE_ADMIN');
-            $students = $userRepository->findByRole('ROLE_STUDENT');
             $teachers = $userRepository->findByRole('ROLE_TEACHER');
-
+            $students = $userRepository->findByRole('ROLE_STUDENT');
+            $admins = $userRepository->findByRole('ROLE_ADMIN');
             return $this->render('admin/user/list.html.twig', [
                 'controller_name' => 'AdminController',
                 'is_dashboard' => true,
                 'is_admin' => true,
-                'userType' => $userType,
                 'admins' => $admins,
                 'students' => $students,
                 'teachers' => $teachers
             ]);
         }
     }
+
+    #[Route('/admin/allUsers', name: 'admin_allUsers')]
+    public function allUsers(
+        UserRepository $userRepository
+    ): Response
+    {
+        $admins = $userRepository->findByRole('ROLE_ADMIN');
+        $students = $userRepository->findByRole('ROLE_STUDENT');
+        $teachers = $userRepository->findByRole('ROLE_TEACHER');
+
+        return $this->render('admin/user/list.html.twig', [
+            'controller_name' => 'AdminController',
+            'is_dashboard' => true,
+            'is_admin' => true,
+            'admins' => $admins,
+            'students' => $students,
+            'teachers' => $teachers
+        ]);
+    }
+
+
+
 
     #[Route('/admin/courses', name: 'admin_courses')]
     public function courses(
@@ -157,14 +177,12 @@ class AdminController extends AbstractController
         $id,
         UserRepository $userRepository,
         EntityManagerInterface $em,
-        Request $request
     ){
         $user = $userRepository->find($id);
         if (!$user) {
             throw $this->createNotFoundException('L\'utilisateur n\'existe pas');
         }
         $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($user);
             $em->flush();
