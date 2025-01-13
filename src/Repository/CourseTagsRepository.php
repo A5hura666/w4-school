@@ -16,6 +16,17 @@ class CourseTagsRepository extends ServiceEntityRepository
         parent::__construct($registry, CourseTags::class);
     }
 
+    public function countByTag(int $tagId): int
+    {
+        $qb = $this->createQueryBuilder('ct')
+            ->select('count(ct.id)')
+            ->where('ct.id = :tagId')
+            ->setParameter('tagId', $tagId);
+
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
     //    /**
     //     * @return CourseTags[] Returns an array of CourseTags objects
     //     */
