@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Chapters;
+use App\Entity\CourseEnrollments;
 use App\Entity\Courses;
 use App\Entity\CourseTags;
 use App\Entity\Exercises;
@@ -215,6 +216,20 @@ class AppFixtures extends Fixture
 
             $manager->persist($user);
             $studentObjects[] = $user; // Stocker les étudiants
+        }
+
+        // Enrollments
+        foreach ($studentObjects as $student) {
+            $enrollmentCount = rand(1, 3);
+            $selectedCourses = $faker->randomElements($courses, $enrollmentCount);
+
+            foreach ($selectedCourses as $course) {
+                $enrollment = new CourseEnrollments();
+                $enrollment->setStudent($student)
+                    ->setCourses($course)
+                    ->setAnrolledAt(new \DateTimeImmutable());
+                $manager->persist($enrollment);
+            }
         }
 
         // Lesson Progress

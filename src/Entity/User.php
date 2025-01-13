@@ -290,4 +290,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Courses>
+     */
+    public function getCourses(): Collection
+    {
+        $courses = new ArrayCollection();
+
+        foreach ($this->courseEnrollments as $enrollment) {
+            $courses->add($enrollment->getCourses());
+        }
+
+        return $courses;
+    }
 }
