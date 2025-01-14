@@ -7,6 +7,7 @@ use App\Entity\Media;
 use App\Form\CoursesType;
 use App\Repository\ChaptersRepository;
 use App\Repository\CoursesRepository;
+use App\Service\MediaUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -37,8 +38,12 @@ class CoursesController extends AbstractController
     }
 
     #[Route('/teacher/courses/create', name: 'courses_create')]
-    public function create(Request $request, EntityManagerInterface $em, TeachersController $teachersController, #[Autowire('%uploads_directory%')] string $uploads_directory): Response
-    {
+    public function create(
+        Request $request,
+        EntityManagerInterface $em,
+        MediaUploader $mediaUploader,
+        TeachersController $teachersController
+    ): Response {
         $course = new Courses();
         $form = $this->createForm(CoursesType::class, $course);
         $form->handleRequest($request);
@@ -53,32 +58,24 @@ class CoursesController extends AbstractController
 
             $illustrationFile = $form['illustration']->getData();
             if ($illustrationFile) {
-                $media = new Media();
-                $extension = $illustrationFile->guessExtension();
-                $illustrationFileName = uniqid() . '.' . $extension;
-                $illustrationFile->move($uploads_directory, $illustrationFileName);
-
-                $media->setFileName($illustrationFileName);
-                $media->setMediaType(Media::TYPE_IMAGES);
-                $media->setUploadedAt(new \DateTimeImmutable());
-
-                $media->setFilePath($uploads_directory.'/'.$illustrationFileName);
-                $media->setRelatedId($course->getId());
-                $media->setRelatedType(Media::RELATED_COURSES);
-
-                $em->persist($media);
-                $course->setIllustration($media);
+                try {
+                    $media = $mediaUploader->upload($illustrationFile, $course->getId(), Media::TYPE_IMAGES, Media::RELATED_COURSES);
+                    $course->setIllustration($media);
+                    $em->persist($media);
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Une erreur est survenue lors de l\'upload de l\'illustration');
+                    return $this->redirectToRoute('courses_create');
+                }
             }
 
             $em->flush();
 
-            if (in_array('ROLE_ADMIN', $teachersController->getUser()->getRoles())) {
+            if ($teachersController->isGranted('ROLE_ADMIN')) {
                 return $this->redirectToRoute('admin_courses');
             }
             return $this->redirectToRoute('teacher_courses_list');
         }
 
-        // Render the form if not submitted or invalid
         return $this->render('teacher/courses/create.html.twig', [
             'form' => $form->createView(),
             'is_dashboard' => true,
