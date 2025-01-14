@@ -37,7 +37,7 @@ class Exercises
     /**
      * @var Collection<int, Submissions>
      */
-    #[ORM\OneToMany(targetEntity: Submissions::class, mappedBy: 'exercice')]
+    #[ORM\OneToMany(targetEntity: Submissions::class, mappedBy: 'exercice', cascade: ['remove'])]
     private Collection $submissions;
 
     public function __construct()

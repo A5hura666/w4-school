@@ -13,7 +13,7 @@ class Submissions
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'submissions')]
+    #[ORM\ManyToOne(inversedBy: 'submissions', cascade: ['remove'])]
     private ?Exercises $exercice = null;
 
     #[ORM\ManyToOne(inversedBy: 'submissions')]

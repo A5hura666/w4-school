@@ -9,7 +9,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LessonsRepository::class)]
-class Lessons
+class Lessons implements Sortable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -31,26 +31,26 @@ class Lessons
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'lessons')]
+    #[ORM\ManyToOne(cascade: ['remove'], inversedBy: 'lessons')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Chapters $chapter = null;
 
     /**
      * @var Collection<int, Exercises>
      */
-    #[ORM\OneToMany(targetEntity: Exercises::class, mappedBy: 'lesson')]
+    #[ORM\OneToMany(targetEntity: Exercises::class, mappedBy: 'lesson', cascade: ['remove'])]
     private Collection $exercises;
 
     /**
      * @var Collection<int, LessonMedia>
      */
-    #[ORM\OneToMany(targetEntity: LessonMedia::class, mappedBy: 'lessonId')]
+    #[ORM\OneToMany(targetEntity: LessonMedia::class, mappedBy: 'lesson', cascade: ['remove'])]
     private Collection $lessonMedia;
 
     /**
      * @var Collection<int, LessonProgress>
      */
-    #[ORM\OneToMany(targetEntity: LessonProgress::class, mappedBy: 'lessonId')]
+    #[ORM\OneToMany(targetEntity: LessonProgress::class, mappedBy: 'lesson', cascade: ['remove'])]
     private Collection $lessonProgress;
 
     public function __construct()

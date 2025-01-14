@@ -1,0 +1,30 @@
+{# templates/teacher/lessons/create.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer une Nouvelle Leçon{% endblock %}
+
+{% block content %}
+    <div class="p-4 sm:ml-64">
+        <div class="p-4 mt-14">
+            <div class="p-4 mt-6 bg-white shadow-md rounded-lg">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Nouvelle Leçon</h1>
+
+                <!-- Formulaire de création -->
+
+                <!-- Champ Titre -->
+                <div class="mb-4">
+                    <div class="mt-1">
+                        <h1 class="text-3xl font-bold text-gray-800 mb-6">{{ lesson.title }}</h1>
+                    </div>
+                </div>
+
+                <!-- Champ Contenu -->
+                <div class="mb-4">
+                    <div class="mt-1">
+                        <p>{{ lesson.content|raw  }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

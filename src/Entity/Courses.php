@@ -35,19 +35,19 @@ class Courses
     /**
      * @var Collection<int, Chapters>
      */
-    #[ORM\OneToMany(targetEntity: Chapters::class, mappedBy: 'course')]
+    #[ORM\OneToMany(targetEntity: Chapters::class, mappedBy: 'course', cascade: ['remove'])]
     private Collection $chapters;
 
     /**
      * @var Collection<int, CourseEnrollments>
      */
-    #[ORM\OneToMany(targetEntity: CourseEnrollments::class, mappedBy: 'courses')]
+    #[ORM\OneToMany(targetEntity: CourseEnrollments::class, mappedBy: 'courses', cascade: ['remove'])]
     private Collection $courseEnrollments;
 
     /**
      * @var Collection<int, CourseTags>
      */
-    #[ORM\OneToMany(targetEntity: CourseTags::class, mappedBy: 'course')]
+    #[ORM\OneToMany(targetEntity: CourseTags::class, mappedBy: 'course', cascade: ['remove'])]
     private Collection $courseTags;
 
 

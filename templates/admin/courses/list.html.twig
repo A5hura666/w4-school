@@ -5,21 +5,26 @@
 {% block content %}
     <div class="p-4 sm:ml-64">
         <div class="p-4 mt-14">
-            <ol class="list-none p-0 inline-flex">
-                <li class="flex items-center">
-                    <a href="{{ path('teacher_dashboard') }}" class="text-blue-600 dark:text-blue-400">Tableau de bord</a>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-2" fill="none" viewBox="0 0 24 24"
-                         stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M9 5l7 7-7 7"/>
-                    </svg>
-                </li>
-                <li class="flex items-center">
-                    <span class="text-gray-500 dark:text-gray-400">Cours</span>
-                </li>
-            </ol>
+            <nav class="text-gray-600 dark:text-gray-400" aria-label="Breadcrumb">
+                <ol class="list-none p-0 inline-flex">
+                    <li class="flex items-center">
+                        <a href="{{ path('admin_dashboard') }}" class="text-blue-600 dark:text-blue-400">Tableau de bord</a>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-2" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </li>
+                    <li class="flex items
+                    -center">
+                        <span class="text-gray-500 dark:text-gray-400">Cours</span>
+                    </li>
+
+
+                </ol>
+            </nav>
             <h2 class="text-4xl font-extrabold dark:text-white">Liste des cours</h2>
-            <p class="my-4 text-lg text-gray-500">Vous retrouverez ici la liste de tous vos cours que vous avez créés.</p>
+            <p class="my-4 text-lg text-gray-500">Vous retrouverez ici la liste de tous les cours.</p>
 
             <!-- Bouton de création -->
             <div class="mb-6">
@@ -75,17 +80,17 @@
                             </td>
                             <td class="p-2 border border-gray-300 dark:border-gray-600 text-center">
                                 <!-- Lien pour consulter -->
-                                <a href="{{ path('teacher_chapters_list', {'courseId': course.id}) }}"
+                                <a href="{{ path('admin_chapters_list', {'courseId': course.id}) }}"
                                    class="inline-block mx-1 p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg">
                                     <img src="{{ asset('images/eye-white.svg') }}" alt="Voir" class="w-5 h-5">
                                 </a>
                                 <!-- Lien pour modifier -->
-                                <a href="{{ path('teacher_courses_edit', {'id': course.id}) }}"
+                                <a href="{{ path('admin_courses_edit', {'courseId': course.id}) }}"
                                    class="inline-block mx-1 p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg">
                                     <img src="{{ asset('images/pencil-white.svg') }}" alt="Modifier" class="w-5 h-5">
                                 </a>
                                 <!-- Lien pour supprimer -->
-                                <a href="{{ path('teacher_courses_delete', {'id': course.id}) }}"
+                                <a href="{{ path('admin_courses_delete', {'courseId': course.id}) }}"
                                    class="inline-block mx-1 p-2 bg-red-700 hover:bg-red-800 text-white rounded-lg"
                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce cours ?');">
                                     <img src="{{ asset('images/trash-white.svg') }}" alt="Supprimer" class="w-5 h-5">

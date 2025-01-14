@@ -17,7 +17,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 #[ORM\Entity(repositoryClass: ChaptersRepository::class)]
-class Chapters extends AbstractType
+class Chapters extends AbstractType implements Sortable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -39,7 +39,7 @@ class Chapters extends AbstractType
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'chapters')]
+    #[ORM\ManyToOne(cascade: ['remove'], inversedBy: 'chapters')]
     private ?Courses $course = null;
 
     /**
@@ -92,6 +92,8 @@ class Chapters extends AbstractType
         $this->position = $position;
 
         return $this;
+
+
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable

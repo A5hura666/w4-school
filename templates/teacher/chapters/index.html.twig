@@ -5,6 +5,28 @@
 {% block content %}
     <div class="p-4 sm:ml-64">
         <div class="p-4 mt-14">
+            <ol class="list-none p-0 inline-flex">
+                <li class="flex items-center">
+                    <a href="{{ path('teacher_dashboard') }}" class="text-blue-600 dark:text-blue-400">Tableau de bord</a>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-2" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 5l7 7-7 7"/>
+                    </svg>
+                </li>
+                <li class="flex items-center">
+                    <a href="{{ path('teacher_courses_list') }}" class="text-blue-600 dark:text-blue-400">Cours</a>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-2" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 5l7 7-7 7"/>
+                    </svg>
+                </li>
+                <li class="flex items
+                    -center">
+                    <span class="text-gray-500 dark:text-gray-400">Chapitres</span>
+                </li>
+            </ol>
             <h2 class="text-4xl font-extrabold dark:text-white">Liste des Chapitres</h2>
             <p class="my-4 text-lg text-gray-500">Vous retrouverez ici la liste de tous vos chapitres pour le cours sélectionné.</p>
 
