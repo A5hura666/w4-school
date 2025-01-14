@@ -1,23 +1,29 @@
 <?php
 
 namespace App\Controller;
-
-use App\Form\CoursesType;
+use App\Entity\User;
 use App\Repository\CoursesRepository;
 use App\Repository\CourseTagsRepository;
-use App\Repository\StudentRepository;
 use App\Repository\TagsRepository;
 use App\Repository\UserRepository;
-use Cassandra\Type\UserType;
+use App\Form\UserType;
 use Doctrine\ORM\EntityManagerInterface;
-use http\Client\Request;
+use \Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 class AdminController extends AbstractController
 {
+    private UserPasswordHasherInterface $passwordHasher;
+
+    public function __construct(UserPasswordHasherInterface $passwordHasher)
+    {
+        $this->passwordHasher = $passwordHasher;
+    }
+
     #[Route('/admin', name: 'admin_dashboard')]
     public function index(
         AdminController $adminController,
@@ -174,6 +180,38 @@ class AdminController extends AbstractController
 
     #[Route('/admin/users/{id}/edit', name: 'admin_users_edit')]
     public function editUser(
+        Request $request,
+        User $user,
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $passwordHasher
+    ): Response {
+        $form = $this->createForm(UserType::class, $user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $roles = $form->get('roles')->getData();
+            $user->setRoles($roles);
+
+            $user->setPassword($user->getPassword());
+
+
+            $em->persist($user);
+            $em->flush();
+
+            $this->addFlash('success', 'La modification de l\'utilisateur a été effectuée avec succès');
+
+            return $this->redirectToRoute('admin_users', ['userType' => $user->getRoles()[0]]);
+        }
+
+        return $this->render('admin/user/edit.html.twig', [
+            'form' => $form->createView(),
+            'is_admin'=> true,
+            'is_dashboard' => true,
+        ]);
+    }
+
+    public function createUser(
         $id,
         UserRepository $userRepository,
         EntityManagerInterface $em,
@@ -207,7 +245,7 @@ class AdminController extends AbstractController
         if (!$course) {
             throw $this->createNotFoundException('Le cours n\'existe pas');
         }
-        $form = $this->createForm(CoursesType::class, $course);
+        $form = $this->createForm(UserType::class, $course);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($course);
@@ -238,6 +276,4 @@ class AdminController extends AbstractController
             'user' => $user,
         ]);
     }
-
-
 }
