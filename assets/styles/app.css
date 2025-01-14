@@ -3,15 +3,15 @@
 @tailwind utilities;
 
 html, body {
-    height: 100%; /* Permet de s'assurer que l'ensemble de la page occupe la hauteur du viewport */
+    height: 100%;
 }
 body {
     display: flex;
-    flex-direction: column; /* Positionne les enfants en colonne : header, main, footer */
-    min-height: 100%; /* S'assure que le body occupe au moins la hauteur du viewport */
+    flex-direction: column;
+    min-height: 100%;
     padding: 0;
     margin: 0;
 }
 main {
-    flex: 1; /* Fait en sorte que le main prenne tout l'espace restant */
+    flex: 1;
 }

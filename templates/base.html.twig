@@ -4,6 +4,7 @@
 {% include 'base/head.html.twig' %}
 
 <body class="min-h-screen flex flex-col">
+
 <header id="{% if is_dashboard is defined and is_dashboard %}logo-sidebar{% else %}default-header{% endif %}">
     {% if is_dashboard is defined and is_dashboard and is_admin is not defined %}
         {% include 'base/header-dashboard.html.twig' %}
