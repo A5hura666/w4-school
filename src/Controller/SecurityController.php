@@ -53,45 +53,45 @@ class SecurityController extends AbstractController
         $form = $this->createForm(RegistrationFormType::class, $user);
 
         $form->handleRequest($request);
+        $errors = [];
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
             $email = $form->get('email')->getData();
             $password = $form->get('password')->getData();
 
             $existingUser = $userRepository->findOneBy(['email' => $email]);
             if ($existingUser) {
-                $this->addFlash('error', 'Cet email est déjà utilisé.');
-                return $this->render('security/register.html.twig', [
-                    'registration_form' => $form->createView(),
-                ]);
+                $errors[] = 'Cet email est déjà utilisé.';
             }
 
             if (!$this->isPasswordValid($password)) {
-                $this->addFlash('error', 'Le mot de passe doit contenir au moins 8 caractères, une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial.');
-                return $this->render('security/register.html.twig', [
-                    'registration_form' => $form->createView(),
-                ]);
+                $errors[] = 'Le mot de passe est incorrect.';
             }
 
-            $hashedPassword = $this->passwordHasher->hashPassword($user, $password);
+            if (empty($errors)) {
+                $hashedPassword = $this->passwordHasher->hashPassword($user, $password);
+                $roles = $form->get('roles')->getData();
+                if (!is_array($roles)) {
+                    $roles = [$roles];
+                }
 
-            $roles = $form->get('roles')->getData();
-            if (!is_array($roles)) {
-                $roles = [$roles];
+                $user->setFirstName($form->get('first_name')->getData() ?: '');
+                $user->setLastName($form->get('last_name')->getData() ?: '');
+                $user->setEmail($email);
+                $user->setPassword($hashedPassword);
+                $user->setRoles($roles);
+
+                $entityManager->persist($user);
+                $entityManager->flush();
+
+                $mailer->sendWelcomeEmail($email, $user->getFirstName());
+
+                return $this->redirectToRoute('app_login');
             }
+        }
 
-            $user->setFirstName($form->get('first_name')->getData() ?: '');
-            $user->setLastName($form->get('last_name')->getData() ?: '');
-            $user->setEmail($email);
-            $user->setPassword($hashedPassword);
-            $user->setRoles($roles);
-
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            $mailer->sendWelcomeEmail($email, $user->getFirstName());
-
-            return $this->redirectToRoute('app_login');
+        foreach ($errors as $error) {
+            $this->addFlash('error', $error);
         }
 
         return $this->render('security/register.html.twig', [
@@ -141,26 +141,29 @@ class SecurityController extends AbstractController
 
         $form = $this->createForm(ResetPasswordFormType::class);
         $form->handleRequest($request);
+        $errors = [];
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
             $newPassword = $form->get('password')->getData();
 
             if (!$this->isPasswordValid($newPassword)) {
-                $this->addFlash('error', 'Le mot de passe doit contenir au moins 8 caractères, une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial.');
-                return $this->render('security/reset_password_change.html.twig', [
-                    'reset_password_form' => $form->createView(),
-                ]);
+                $errors[] = 'Le mot de passe est incorrect.';
             }
 
-            $hashedPassword = $this->passwordHasher->hashPassword($user, $newPassword);
+            if (empty($errors)) {
+                $hashedPassword = $this->passwordHasher->hashPassword($user, $newPassword);
+                $user->setPassword($hashedPassword);
+                $user->setResetToken(null);
+                $entityManager->persist($user);
+                $entityManager->flush();
 
-            $user->setPassword($hashedPassword);
-            $user->setResetToken(null);
-            $entityManager->persist($user);
-            $entityManager->flush();
+                $this->addFlash('success', 'Votre mot de passe a été changé avec succès.');
+                return $this->redirectToRoute('app_login');
+            }
+        }
 
-            $this->addFlash('success', 'Votre mot de passe a été changé avec succès.');
-            return $this->redirectToRoute('app_login');
+        foreach ($errors as $error) {
+            $this->addFlash('error', $error);
         }
 
         return $this->render('security/reset_password_change.html.twig', [

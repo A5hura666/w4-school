@@ -1,7 +1,7 @@
 {% for label, messages in app.flashes %}
     {% for message in messages %}
-        <div class="fixed bottom-0 right-0 p-6 z-50">
-            <div id="toast-{{ loop.index }}" class="flex items-center w-full max-w-xs p-4 mb-4 bg-white text-black rounded-lg shadow dark:text-white dark:bg-gray-800" role="alert">
+        <div class="w-[25rem] fixed bottom-0 right-0 p-6 z-50" style="bottom: {{ loop.index * 10 }}px; z-index: {{ 50 - loop.index }};">
+            <div id="toast-{{ loop.index }}" class="flex items-center w-full max-w-xs p-4 mb-4 bg-white text-black rounded-lg shadow dark:text-white dark:bg-gray-800 toast border-2 border-gray-700" role="alert">
                 <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 {{ label == 'success' ? 'bg-green-100 text-green-500' : label == 'error' ? 'bg-red-100 text-red-500' : 'bg-orange-100 text-orange-500' }} rounded-lg">
                     <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                         {% if label == 'success' %}

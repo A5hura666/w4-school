@@ -14,8 +14,11 @@ class ResetPasswordFormType extends AbstractType
         $builder
             ->add('password', PasswordType::class, [
                 'label' => 'Nouveau mot de passe',
+                'label_attr' => [
+                    'class' => 'text-black dark:text-white',
+                ],
                 'attr' => [
-                    'class' => 'w-full px-4 py-2 text-sm border rounded-lg',
+                    'class' => 'mt-2 w-full px-4 py-2 text-sm border rounded-lg',
                     'placeholder' => 'Entrez votre nouveau mot de passe',
                 ],
                 'required' => true,
