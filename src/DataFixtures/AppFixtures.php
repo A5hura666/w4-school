@@ -8,15 +8,12 @@ use App\Entity\Courses;
 use App\Entity\CourseTags;
 use App\Entity\Exercises;
 use App\Entity\Lessons;
-use App\Entity\LessonMedia;
 use App\Entity\LessonProgress;
-use App\Entity\Media;
 use App\Entity\Notifications;
 use App\Entity\Submissions;
 use App\Entity\Tags;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\DBAL\Types\DateImmutableType;
 use Doctrine\Persistence\ObjectManager;
 use Faker;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -170,27 +167,17 @@ class AppFixtures extends Fixture
             }
         }
 
-        // Media
-        $mediaList = [];
-        for ($i = 0; $i < 10; $i++) {
-            $media = new Media();
-            $media->setFileName($faker->word() . '.jpg')
-                ->setFilePath($faker->url())
-                ->setMediaType('image')
-                ->setUploadedAt(\DateTimeImmutable::createFromMutable($faker->dateTime()));
-            $manager->persist($media);
-            $mediaList[] = $media;
-        }
-
-        // Lesson Media
-        foreach ($lessons as $lesson) {
-            for ($i = 0; $i < rand(1, 2); $i++) {
-                $lessonMedia = new LessonMedia();
-                $lessonMedia->setLesson($lesson)
-                    ->setMediaId($mediaList[array_rand($mediaList)]);
-                $manager->persist($lessonMedia);
-            }
-        }
+//        // Media
+//        $mediaList = [];
+//        for ($i = 0; $i < 10; $i++) {
+//            $media = new Media();
+//            $media->setFileName($faker->word() . '.jpg')
+//                ->setFilePath($faker->url())
+//                ->setMediaType('image')
+//                ->setUploadedAt(\DateTimeImmutable::createFromMutable($faker->dateTime()));
+//            $manager->persist($media);
+//            $mediaList[] = $media;
+//        }
 
         // Students
         $students = [

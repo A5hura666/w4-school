@@ -34,6 +34,15 @@
                         {{ form_errors(form.description) }}
                     </div>
 
+                    <!-- Champ Illustration -->
+                    <div class="mb-4">
+                        {{ form_label(form.illustration, 'Illustration (image)', {'class': 'block text-gray-700 font-medium'}) }}
+                        <div class="mt-1">
+                            {{ form_widget(form.illustration) }}
+                        </div>
+                        {{ form_errors(form.illustration) }}
+                    </div>
+
                     <!-- Bouton de soumission -->
                     <div class="flex justify-end">
                         <button type="submit"

@@ -3,13 +3,20 @@
 namespace App\Entity;
 
 use App\Repository\MediaRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
 class Media
 {
+    public const TYPE_VIDEO = 'video';
+    public const TYPE_IMAGES = 'image';
+    public const TYPE_AUDIO = 'audio';
+    public const TYPE_DOCUMENTS = 'document';
+
+    public const RELATED_COURSES = 'courses';
+    public const RELATED_CHAPTERS = 'chapters';
+    public const RELATED_LESSONS = 'lessons';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -19,7 +26,7 @@ class Media
     private ?string $fileName = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $FilePath = null;
+    private ?string $filePath = null;
 
     #[ORM\Column(length: 255)]
     private ?string $mediaType = null;
@@ -27,15 +34,14 @@ class Media
     #[ORM\Column]
     private ?\DateTimeImmutable $uploadedAt = null;
 
-    /**
-     * @var Collection<int, LessonMedia>
-     */
-    #[ORM\OneToMany(targetEntity: LessonMedia::class, mappedBy: 'mediaId')]
-    private Collection $lessonMedia;
+    #[ORM\Column(nullable: true)]
+    private ?int $relatedId = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $relatedType = null;
 
     public function __construct()
     {
-        $this->lessonMedia = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -57,12 +63,12 @@ class Media
 
     public function getFilePath(): ?string
     {
-        return $this->FilePath;
+        return $this->filePath;
     }
 
-    public function setFilePath(string $FilePath): static
+    public function setFilePath(string $filePath): static
     {
-        $this->FilePath = $FilePath;
+        $this->filePath = $filePath;
 
         return $this;
     }
@@ -91,33 +97,36 @@ class Media
         return $this;
     }
 
-    /**
-     * @return Collection<int, LessonMedia>
-     */
-    public function getLessonMedia(): Collection
+    public function getRelatedId(): ?int
     {
-        return $this->lessonMedia;
+        return $this->relatedId;
     }
 
-    public function addLessonMedium(LessonMedia $lessonMedium): static
+    public function setRelatedId(?int $relatedId): static
     {
-        if (!$this->lessonMedia->contains($lessonMedium)) {
-            $this->lessonMedia->add($lessonMedium);
-            $lessonMedium->setMediaId($this);
-        }
+        $this->relatedId = $relatedId;
 
         return $this;
     }
 
-    public function removeLessonMedium(LessonMedia $lessonMedium): static
+    public function getRelatedType(): ?string
     {
-        if ($this->lessonMedia->removeElement($lessonMedium)) {
-            // set the owning side to null (unless already changed)
-            if ($lessonMedium->getMediaId() === $this) {
-                $lessonMedium->setMediaId(null);
-            }
-        }
+        return $this->relatedType;
+    }
+
+    public function setRelatedType(?string $relatedType): static
+    {
+        $this->relatedType = $relatedType;
 
         return $this;
+    }
+
+    public static function getAvailableRelated(): array
+    {
+        return [
+            self::RELATED_LESSONS,
+            self::RELATED_CHAPTERS,
+            self::RELATED_COURSES,
+        ];
     }
 }
