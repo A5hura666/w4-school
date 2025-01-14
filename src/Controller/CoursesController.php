@@ -10,7 +10,6 @@ use App\Repository\CoursesRepository;
 use App\Service\MediaUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -53,27 +52,31 @@ class CoursesController extends AbstractController
             $course->setTeacherId($teacher);
             $course->setCreatedAt(new \DateTimeImmutable());
 
-            $em->persist($course);
-            $em->flush();
+            $em->beginTransaction();
 
-            $illustrationFile = $form['illustration']->getData();
-            if ($illustrationFile) {
-                try {
+            try {
+                $em->persist($course);
+                $em->flush();
+
+                $illustrationFile = $form['illustration']->getData();
+                if ($illustrationFile) {
                     $media = $mediaUploader->upload($illustrationFile, $course->getId(), Media::TYPE_IMAGES, Media::RELATED_COURSES);
                     $course->setIllustration($media);
                     $em->persist($media);
-                } catch (\Exception $e) {
-                    $this->addFlash('error', 'Une erreur est survenue lors de l\'upload de l\'illustration');
-                    return $this->redirectToRoute('courses_create');
                 }
-            }
 
-            $em->flush();
+                $em->flush();
+                $em->commit();
 
-            if ($teachersController->isGranted('ROLE_ADMIN')) {
-                return $this->redirectToRoute('admin_courses');
+                if ($teachersController->isGranted('ROLE_ADMIN')) {
+                    return $this->redirectToRoute('admin_courses');
+                }
+                return $this->redirectToRoute('teacher_courses_list');
+            } catch (\Exception $e) {
+                $em->rollback();
+                $this->addFlash('error', 'Une erreur est survenue lors de la création du cours ou de l\'upload de l\'illustration.');
+                return $this->redirectToRoute('courses_create');
             }
-            return $this->redirectToRoute('teacher_courses_list');
         }
 
         return $this->render('teacher/courses/create.html.twig', [

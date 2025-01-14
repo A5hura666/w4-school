@@ -35,6 +35,16 @@ class CoursesType extends AbstractType
                     'class' => 'form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm',
                 ],
                 'mapped' => false,
+                'constraints' => [
+                    new Image([
+                        'maxSize' => '5M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/jpg',
+                            'image/png',
+                        ],
+                    ]),
+                ],
             ]);
     }
 
