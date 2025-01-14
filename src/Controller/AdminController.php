@@ -309,11 +309,20 @@ class AdminController extends AbstractController
         if (!$user) {
             throw $this->createNotFoundException('L\'utilisateur n\'existe pas');
         }
-        return $this->render('admin/user/detail.html.twig', [
+        $userType = 'student';
+        if ($user->getRoles()[0]=='ROLE_ADMIN'){
+            $userType = 'admin';
+        }elseif ($user->getRoles()[0]=='ROLE_TEACHER'){
+            $userType = 'teacher';
+        }else{
+            $userType = 'student';
+        }
+        return $this->render('admin/user/index.html.twig', [
             'controller_name' => 'AdminController',
             'is_dashboard' => true,
             'is_admin' => true,
             'user' => $user,
+            'userType'=>$userType
         ]);
     }
 
