@@ -52,6 +52,70 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult();
     }
 
+    // src/Repository/UserRepository.php
+
+    public function countUsersRegisteredLast30Days(): int
+    {
+        $last30Days = new \DateTime('-30 days');
+        $now = new \DateTime();
+
+        return $this->createQueryBuilder('u')
+            ->select('count(u.id)')
+            ->where('u.createdAt BETWEEN :start AND :end')
+            ->setParameter('start', $last30Days)
+            ->setParameter('end', $now)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countUsersRegisteredPreviousMonth(): int
+    {
+        $firstDayOfPreviousMonth = new \DateTime('first day of last month');
+        $lastDayOfPreviousMonth = new \DateTime('last day of last month 23:59:59');
+
+        return $this->createQueryBuilder('u')
+            ->select('count(u.id)')
+            ->where('u.createdAt BETWEEN :start AND :end')
+            ->setParameter('start', $firstDayOfPreviousMonth)
+            ->setParameter('end', $lastDayOfPreviousMonth)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+
+    public function getUserRegistrationsByMonth(string $filterMode, string $yearSelected ): array
+    {
+        if ($yearSelected=="null"){
+            if ($filterMode == 'month') {
+                $currentYear = (new \DateTime())->format('Y');
+                $qb = $this->createQueryBuilder('u')
+                    ->select('DATE_FORMAT(u.createdAt, \'%Y-%m\') as month, COUNT(u.id) as count')
+                    ->where('DATE_FORMAT(u.createdAt, \'%Y\') = :currentYear')
+                    ->setParameter('currentYear', $currentYear)
+                    ->groupBy('month')
+                    ->orderBy('month', 'ASC');
+            } else {
+                $qb = $this->createQueryBuilder('u')
+                    ->select('DATE_FORMAT(u.createdAt, \'%Y\') as year, COUNT(u.id) as count')
+                    ->groupBy('year')
+                    ->orderBy('year', 'ASC');
+            }
+        }else{
+            $qb = $this->createQueryBuilder('u')
+                ->select('DATE_FORMAT(u.createdAt, \'%Y\') as month, COUNT(u.id) as count')
+                ->where('DATE_FORMAT(u.createdAt, \'%Y\') = :yearSelected')
+                ->setParameter('yearSelected', $yearSelected)
+                ->groupBy('month')
+                ->orderBy('month', 'ASC');
+        }
+
+
+
+        return $qb->getQuery()->getResult();
+    }
+
+
+
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */

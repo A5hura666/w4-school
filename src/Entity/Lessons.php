@@ -31,7 +31,7 @@ class Lessons implements Sortable
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\ManyToOne(cascade: ['remove'], inversedBy: 'lessons')]
+    #[ORM\ManyToOne(inversedBy: 'lessons')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Chapters $chapter = null;
 

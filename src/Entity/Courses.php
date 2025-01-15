@@ -47,7 +47,7 @@ class Courses
     /**
      * @var Collection<int, CourseTags>
      */
-    #[ORM\OneToMany(targetEntity: CourseTags::class, mappedBy: 'course', cascade: ['remove'])]
+    #[ORM\OneToMany(targetEntity: CourseTags::class, mappedBy: 'course')]
     private Collection $courseTags;
 
     #[ORM\OneToOne(targetEntity: Media::class, cascade: ['persist'], orphanRemoval: false)]

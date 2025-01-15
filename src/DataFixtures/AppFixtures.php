@@ -36,6 +36,7 @@ class AppFixtures extends Fixture
             ->setLastName('admin')
             ->setFirstName('admin')
             ->setRoles(['ROLE_ADMIN']);
+        $admin->setCreatedAt($faker->dateTime());
         $hashedPassword = $this->passwordHasher->hashPassword($admin, 'admin');
         $admin->setPassword($hashedPassword);
         $manager->persist($admin);
@@ -57,6 +58,7 @@ class AppFixtures extends Fixture
             $user->setFirstName($teacherData['firstName']);
             $user->setLastName($teacherData['lastName']);
             $user->setRoles(['ROLE_TEACHER']);
+            $user->setCreatedAt($faker->dateTime());
 
             // Hash the password
             $hashedPassword = $this->passwordHasher->hashPassword($user, 'teacher');
@@ -196,6 +198,7 @@ class AppFixtures extends Fixture
             $user->setFirstName($studentData['firstName']);
             $user->setLastName($studentData['lastName']);
             $user->setRoles(['ROLE_STUDENT']);
+            $user->setCreatedAt($faker->dateTime());
 
             // Hash the password
             $hashedPassword = $this->passwordHasher->hashPassword($user, 'student');

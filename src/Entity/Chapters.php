@@ -39,13 +39,13 @@ class Chapters extends AbstractType implements Sortable
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[ORM\ManyToOne(cascade: ['remove'], inversedBy: 'chapters')]
+    #[ORM\ManyToOne(inversedBy: 'chapters')]
     private ?Courses $course = null;
 
     /**
      * @var Collection<int, Lessons>
      */
-    #[ORM\OneToMany(targetEntity: Lessons::class, mappedBy: 'chapter', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Lessons::class, mappedBy: 'chapter', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $lessons;
 
     public function __construct()
