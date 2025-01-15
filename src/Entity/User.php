@@ -66,6 +66,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Notifications::class, mappedBy: 'user')]
     private Collection $notifications;
 
+    #[ORM\Column]
+    private ?\DateTime $createdAt = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTime $updatedAt = null;
+
+    #[ORM\Column]
+    private ?bool $active = true;
+
 
     public function __construct()
     {
@@ -186,7 +195,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->submissions->contains($submission)) {
             $this->submissions->add($submission);
-            $submission->setStudentId($this);
+            $submission->setStudent($this);
         }
 
         return $this;
@@ -196,8 +205,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->submissions->removeElement($submission)) {
             // set the owning side to null (unless already changed)
-            if ($submission->getStudentId() === $this) {
-                $submission->setStudentId(null);
+            if ($submission->getStudent() === $this) {
+                $submission->setStudent(null);
             }
         }
 
@@ -216,7 +225,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->courseEnrollments->contains($courseEnrollment)) {
             $this->courseEnrollments->add($courseEnrollment);
-            $courseEnrollment->setStudentId($this);
+            $courseEnrollment->setStudent($this);
         }
 
         return $this;
@@ -226,8 +235,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->courseEnrollments->removeElement($courseEnrollment)) {
             // set the owning side to null (unless already changed)
-            if ($courseEnrollment->getStudentId() === $this) {
-                $courseEnrollment->setStudentId(null);
+            if ($courseEnrollment->getStudent() === $this) {
+                $courseEnrollment->setStudent(null);
             }
         }
 
@@ -246,7 +255,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->lessonProgress->contains($lessonProgress)) {
             $this->lessonProgress->add($lessonProgress);
-            $lessonProgress->setStudentId($this);
+            $lessonProgress->setStudent($this);
         }
 
         return $this;
@@ -256,8 +265,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->lessonProgress->removeElement($lessonProgress)) {
             // set the owning side to null (unless already changed)
-            if ($lessonProgress->getStudentId() === $this) {
-                $lessonProgress->setStudentId(null);
+            if ($lessonProgress->getStudent() === $this) {
+                $lessonProgress->setStudent(null);
             }
         }
 
@@ -286,7 +295,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->notifications->removeElement($notification)) {
             // set the owning side to null (unless already changed)
-            if ($notification->getUserId() === $this) {
+            if ($notification->getUser() === $this) {
                 $notification->setUserId(null);
             }
         }
@@ -316,6 +325,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setResetToken(?string $resetToken): static
     {
         $this->resetToken = $resetToken;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTime
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTime $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTime
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTime $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function isActive(): ?bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): static
+    {
+        $this->active = $active;
 
         return $this;
     }

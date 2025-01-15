@@ -1,4 +1,4 @@
-# W4-school - BOURGUIGNEAU Éthan GELLY Valentin
+# W4-school - BOURGUIGNEAU Éthan (A5hura666) GELLY Valentin (Valentin-Gelly)
 
 ## Idées d'application
 

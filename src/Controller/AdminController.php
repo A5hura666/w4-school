@@ -15,7 +15,9 @@ use App\Repository\LessonsRepository;
 use App\Repository\TagsRepository;
 use App\Repository\UserRepository;
 use App\Form\UserType;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use \Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -39,19 +41,25 @@ class AdminController extends AbstractController
         CoursesRepository $coursesRepository,
         TagsRepository $tagsRepository,
         CourseTagsRepository $courseTagsRepository
-    )
-    : Response
-    {
+    ): Response {
         $admin = $adminController->getUser();
         $userCount = $userRepository->count([]);
         $coursesCount = $coursesRepository->count([]);
         $studentCount = $userRepository->countByRole('ROLE_STUDENT');
         $teacherCount = $userRepository->countByRole('ROLE_TEACHER');
         $adminCount = $userRepository->countByRole('ROLE_ADMIN');
+        $usersRegisteredLast30Days = $userRepository->countUsersRegisteredLast30Days();
+        $usersRegisteredPreviousMonth = $userRepository->countUsersRegisteredPreviousMonth();
+        $percentageChange = 0;
+
+        if ($usersRegisteredPreviousMonth > 0) {
+            $percentageChange = (($usersRegisteredLast30Days - $usersRegisteredPreviousMonth) / $usersRegisteredPreviousMonth) * 100;
+        }
+
         $coursesTags = $tagsRepository->findAll();
         $tagCounts = [];
-        for ($i = 0; $i < count($coursesTags); $i++) {
-            $tagCounts[$coursesTags[$i]->getName()] = $courseTagsRepository->countByTag($coursesTags[$i]->getId());
+        foreach ($coursesTags as $tag) {
+            $tagCounts[$tag->getName()] = $courseTagsRepository->countByTag($tag->getId());
         }
 
         return $this->render('admin/dashboard.html.twig', [
@@ -64,6 +72,8 @@ class AdminController extends AbstractController
             'coursesCount' => $coursesCount,
             'tagCounts' => $tagCounts,
             'adminCount' => $adminCount,
+            'usersRegisteredLast30Days' => $usersRegisteredLast30Days,
+            'percentageChange' => $percentageChange,
             'is_admin' => true,
         ]);
     }
@@ -547,13 +557,42 @@ class AdminController extends AbstractController
         LessonsRepository $lessonsRepository,
         EntityManagerInterface $em
     ){
-        $lesson = $lessonsRepository->find($id);
+        $lesson = $lessonsRepository->findBy(['id'=>$id]);
         if (!$lesson) {
             throw $this->createNotFoundException('La leçon n\'existe pas');
         }
-        $em->remove($lesson);
+        $em->remove($lesson[0]);
         $em->flush();
         return $this->redirectToRoute('admin_lessons_list', ['courseId' => $courseId, 'chapterId' => $chapterId]);
+    }
+
+    /**
+     * @throws \DateMalformedStringException
+     */
+    #[Route('/admin/user-registrations', name: 'admin_user_registrations')]
+    public function getUserRegistrations(Request $request, UserRepository $userRepository): JsonResponse
+    {
+        $filterMode = $request->query->get('filterMode');
+        $yearSelected = $request->query->get('yearSelected');
+
+        $registrations = $userRepository->getUserRegistrationsByMonth($filterMode, $yearSelected);
+
+        $labels = [];
+        $data = [];
+        if ($filterMode=='month'){
+            foreach ($registrations as $registration) {
+                $labels[] = $registration['month'];
+                $data[] = $registration['count'];
+            }
+        }else{
+            foreach ($registrations as $registration) {
+                $labels[] = $registration['year'];
+                $data[] = $registration['count'];
+            }
+        }
+
+
+        return new JsonResponse(['labels' => $labels, 'data' => $data]);
     }
 
 }

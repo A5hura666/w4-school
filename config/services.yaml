@@ -25,5 +25,11 @@ services:
         arguments:
             $uploadsDirectory: '%uploads_directory%'
 
+
+    App\EventListener\SortableListener:
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preRemove }
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
