@@ -5,8 +5,10 @@ namespace App\Controller;
 use App\Entity\Courses;
 use App\Entity\Media;
 use App\Form\CoursesType;
+use App\Form\MediaType;
 use App\Repository\ChaptersRepository;
 use App\Repository\CoursesRepository;
+use App\Repository\MediaRepository;
 use App\Service\MediaUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -44,7 +46,7 @@ class CoursesController extends AbstractController
         TeachersController $teachersController
     ): Response {
         $course = new Courses();
-        $form = $this->createForm(CoursesType::class, $course);
+        $form = $this->createForm(CoursesType::class, $course, ['has_illustration' => true, 'media_type' => Media::TYPE_IMAGES]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -86,30 +88,110 @@ class CoursesController extends AbstractController
     }
 
     #[Route("/teacher/courses/{id}/edit", name: "teacher_courses_edit")]
-    public function edit($id, Request $request, CoursesRepository $coursesRepository, EntityManagerInterface $em): Response
-    {
+    public function edit(
+        $id,
+        Request $request,
+        CoursesRepository $coursesRepository,
+        EntityManagerInterface $em,
+        MediaUploader $mediaUploader
+    ): Response {
         $course = $coursesRepository->find($id);
 
         if (!$course) {
             throw $this->createNotFoundException('Le cours n\'existe pas');
         }
 
-        $form = $this->createForm(CoursesType::class, $course);
-        $form->handleRequest($request);
+        $courseForm = $this->createForm(CoursesType::class, $course);
+        $courseForm->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($courseForm->isSubmitted() && $courseForm->isValid()) {
             $course->setUpdatedAt(new \DateTimeImmutable());
             $em->persist($course);
             $em->flush();
 
+            $this->addFlash('success', 'Le cours a été mis à jour avec succès.');
+
             return $this->redirectToRoute('teacher_courses_list');
         }
 
+        $illustrationForm = $this->createForm(MediaType::class, new Media(), ['media_type' => Media::TYPE_IMAGES]);
+        $illustrationForm->handleRequest($request);
+
+        if ($illustrationForm->isSubmitted() && $illustrationForm->isValid()) {
+            if ($illustrationForm->has('illustration')) {
+                $illustrationFile = $illustrationForm->get('illustration')->getData();
+
+                if ($illustrationFile) {
+                    try {
+                        if ($oldMedia = $course->getIllustration()) {
+                            $mediaUploader->remove($oldMedia);
+                        }
+
+                        $media = $mediaUploader->upload(
+                            $illustrationFile,
+                            $course->getId(),
+                            Media::TYPE_IMAGES,
+                            Media::RELATED_COURSES
+                        );
+
+                        $course->setIllustration($media);
+                        $em->persist($media);
+                        $em->flush();
+                    } catch (\Exception $e) {
+                        $this->addFlash('error', 'Une erreur est survenue lors de l\'upload de l\'illustration.');
+                        return $this->redirectToRoute('teacher_courses_edit', ['id' => $id]);
+                    }
+                }
+
+                $course->setUpdatedAt(new \DateTimeImmutable());
+                $em->persist($course);
+                $em->flush();
+
+                $this->addFlash('success', 'L\'illustration a été ajoutée avec succès.');
+            }
+        }
+
         return $this->render('teacher/courses/edit.html.twig', [
-            'form' => $form->createView(),
+            'courseForm' => $courseForm->createView(),
+            'illustrationForm' => $illustrationForm->createView(),
             'course' => $course,
             'is_dashboard' => true,
+            'media' => $course->getIllustration(),
         ]);
+    }
+
+    #[Route('/courses/{id}/delete-illustration', name: 'delete_course_illustration', methods: ['POST'])]
+    public function deleteIllustration(
+        int $id,
+        CoursesRepository $coursesRepository,
+        EntityManagerInterface $entityManager,
+        MediaUploader $mediaUploader
+    ): Response {
+        $course = $coursesRepository->find($id);
+
+        if (!$course) {
+            $this->addFlash('error', 'Le cours demandé est introuvable.');
+            return $this->redirectToRoute('teacher_courses_edit', ['id' => $id]);
+        }
+
+        $illustration = $course->getIllustration();
+        if (!$illustration) {
+            $this->addFlash('error', 'Aucune illustration à supprimer.');
+            return $this->redirectToRoute('teacher_courses_edit', ['id' => $id]);
+        }
+
+        try {
+            $mediaUploader->remove($illustration);
+            $course->setIllustration(null);
+            $entityManager->persist($course);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'L\'illustration a été supprimée avec succès.');
+        } catch (\RuntimeException $e) {
+            $this->addFlash('error', 'Erreur lors de la suppression de l\'illustration : ' . $e->getMessage());
+        }
+
+        return $this->redirectToRoute('teacher_courses_edit', ['id' => $id]);
     }
 
     #[Route("/teacher/courses/{id}/delete", name: "teacher_courses_delete")]

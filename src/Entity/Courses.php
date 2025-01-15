@@ -50,8 +50,8 @@ class Courses
     #[ORM\OneToMany(targetEntity: CourseTags::class, mappedBy: 'course', cascade: ['remove'])]
     private Collection $courseTags;
 
-    #[ORM\OneToOne(targetEntity: Media::class, cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\OneToOne(targetEntity: Media::class, cascade: ['persist'], orphanRemoval: false)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Media $illustration = null;
 
     public function getIllustration(): ?Media

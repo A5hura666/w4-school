@@ -6,61 +6,132 @@
     <div class="p-4 sm:ml-64">
         <div class="p-4 mt-14">
             <h2 class="text-4xl font-extrabold dark:text-white">Modifier le Cours</h2>
-            <p class="my-4 text-lg text-gray-500">Vous pouvez modifier les informations du cours ci-dessous.</p>
+            <div class="my-4 flex justify-between items-center">
+                <p class="text-lg text-gray-500">Vous pouvez modifier les informations du cours ci-dessous.</p>
+                <!-- Bouton de retour -->
+                <div>
+                    <a href="{{ path('teacher_courses_list') }}"
+                       class="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        Retour à la liste des cours
+                    </a>
+                </div>
+            </div>
 
-            <div class="p-4 mt-6 bg-white shadow-md rounded-lg">
+            <div class="p-4 mt-6 bg-white dark:bg-gray-100 shadow-md rounded-lg">
                 <h1 class="text-3xl font-bold text-gray-800 mb-6">Modifier le Cours : {{ course.title }}</h1>
 
-                <form method="POST" action="{{ path('teacher_courses_edit', {'id': course.id}) }}" enctype="multipart/form-data">
-                    {{ form_start(form) }}
+                <!-- Formulaire pour l'illustration -->
+                <div class="mb-4 relative">
+                    {% if media %}
+                        <div class="flex items-center gap-2 mb-4">
+                            <h2 class="text-md text-gray-700 font-medium">Illustration du cours</h2>
+                            <form method="POST" action="{{ path('delete_course_illustration', {'id': course.id}) }}">
+                                <button type="submit"
+                                        class="bg-red-300 p-2 rounded-md w-full h-6 flex items-center justify-center text-red-900">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                         stroke-linejoin="round" class="lucide lucide-trash-2 mr-1">
+                                        <path d="M3 6h18"/>
+                                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                                        <line x1="10" x2="10" y1="11" y2="17"/>
+                                        <line x1="14" x2="14" y1="11" y2="17"/>
+                                    </svg>
+                                    Supprimer
+                                </button>
+                            </form>
+                        </div>
+                        <div class="relative h-64 w-96 shadow-lg rounded-lg bg-white mb-4">
+                            <img src="{{ asset(media.getFilePath()) }}" alt="Image actuelle"
+                                 class="h-full w-full object-cover">
+
+                            <a href="#" onclick="document.getElementById('media_illustration').click();"
+                               class="absolute top-[-10px] right-[-10px] bg-white rounded-full p-2 shadow-md hover:bg-gray-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                     stroke-linejoin="round" class="lucide lucide-pencil text-gray-600">
+                                    <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/>
+                                    <path d="m15 5 4 4"/>
+                                </svg>
+                            </a>
+                        </div>
+                    {% endif %}
+
+                    <form id="illustration-form" method="POST"
+                          action="{{ path('teacher_courses_edit', {'id': course.id}) }}"
+                          enctype="multipart/form-data">
+                        {{ form_start(illustrationForm) }}
+                        <div class="mb-4" {% if media %} hidden="hidden" {% endif %}>
+                            {{ form_label(illustrationForm.illustration, 'Illustration du cours', {'class': 'text-gray-700 font-medium'}) }}
+                            <div class="mt-1">
+                                {{ form_widget(illustrationForm.illustration, {
+                                    'attr': {
+                                        'class': 'form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm',
+                                        'onchange': 'document.getElementById(`illustration-form`).submit();'
+                                    }
+                                }) }}
+                            </div>
+                        </div>
+                        <div class="text-red-500 flex gap-1">
+                            {{ form_errors(illustrationForm.illustration) }}
+                        </div>
+                        {{ form_end(illustrationForm) }}
+                    </form>
+                </div>
+
+
+                <form method="POST" action="{{ path('teacher_courses_edit', {'id': course.id}) }}"
+                      enctype="multipart/form-data">
+                    {{ form_start(courseForm) }}
 
                     <!-- Champ Titre -->
                     <div class="mb-4">
-                        {{ form_label(form.title, 'Titre du cours', {'class': 'block text-gray-700 font-medium'}) }}
+                        {{ form_label(courseForm.title, 'Titre du cours', {'class': 'block text-gray-700 font-medium'}) }}
                         <div class="mt-1">
-                            {{ form_widget(form.title, {'attr': {'class': 'form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'}}) }}
+                            {{ form_widget(courseForm.title, {'attr': {'class': 'form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'}}) }}
                         </div>
-                        {{ form_errors(form.title) }}
+                        {{ form_errors(courseForm.title) }}
                     </div>
 
                     <!-- Champ Description -->
                     <div class="mb-4">
-                        {{ form_label(form.description, 'Description du cours', {'class': 'block text-gray-700 font-medium'}) }}
+                        {{ form_label(courseForm.description, 'Description du cours', {'class': 'block text-gray-700 font-medium'}) }}
                         <div class="mt-1">
-                            {{ form_widget(form.description, {'attr': {'class': 'form-textarea mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'}}) }}
+                            {{ form_widget(courseForm.description, {'attr': {'class': 'form-textarea mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'}}) }}
                         </div>
-                        {{ form_errors(form.description) }}
+                        {{ form_errors(courseForm.description) }}
                     </div>
 
                     <!-- Affichage des dates -->
                     <div class="mb-4">
-                        <label class="block text-gray-700 font-medium">Date de création</label>
+                        <label class="text-gray-700 font-medium">Date de création</label>
                         <div class="mt-1">
                             <input type="text"
                                    value="{{ course.createdAt ? course.createdAt|date('Y-m-d H:i:s') : 'Pas de date disponible' }}"
                                    class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                   readonly />
+                                   readonly/>
                         </div>
                     </div>
 
                     <div class="mb-4">
-                        <label class="block text-gray-700 font-medium">Date de mise à jour</label>
+                        <label class="text-gray-700 font-medium">Date de mise à jour</label>
                         <div class="mt-1">
                             <input type="text"
                                    value="{{ course.updatedAt ? course.updatedAt|date('Y-m-d H:i:s') : 'N/A' }}"
                                    class="form-input mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                   readonly />
+                                   readonly/>
                         </div>
                     </div>
 
                     <!-- Bouton de soumission -->
                     <div class="flex justify-end">
-                        <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button type="submit"
+                                class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
                             Enregistrer les modifications
                         </button>
                     </div>
 
-                    {{ form_end(form) }}
+                    {{ form_end(courseForm) }}
                 </form>
             </div>
         </div>

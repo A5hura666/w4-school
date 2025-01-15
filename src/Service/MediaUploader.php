@@ -22,15 +22,33 @@ class MediaUploader
         $media = new Media();
         $extension = $file->guessExtension();
         $fileName = uniqid() . '.' . $extension;
-        $file->move($this->uploadsDirectory, $fileName);
+        $uploadsDirectory = $this->uploadsDirectory . '/' . $mediaType;
+        $file->move($uploadsDirectory, $fileName);
 
         $media->setFileName($fileName);
         $media->setMediaType($mediaType);
         $media->setUploadedAt(new \DateTimeImmutable());
-        $media->setFilePath($this->uploadsDirectory . '/' . $fileName);
+        $media->setFilePath('uploads/'. $mediaType . '/' . $fileName);
         $media->setRelatedId($relatedId);
         $media->setRelatedType($relatedType);
 
         return $media;
+    }
+
+    public function remove(Media $media): void
+    {
+        $filePath = $this->uploadsDirectory . '/' . $media->getMediaType() . '/' . $media->getFileName();
+
+        if (!file_exists($filePath)) {
+            return;
+        }
+
+        try {
+            unlink($filePath);
+            $this->entityManager->remove($media);
+            $this->entityManager->flush();
+        } catch (\Exception $e) {
+            throw new \RuntimeException('Une erreur s’est produite lors de la suppression du fichier ou de l’entité.');
+        }
     }
 }
