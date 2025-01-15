@@ -7,8 +7,8 @@ use App\Entity\Media;
 use App\Form\CoursesType;
 use App\Form\MediaType;
 use App\Repository\ChaptersRepository;
+use App\Repository\CourseEnrollmentsRepository;
 use App\Repository\CoursesRepository;
-use App\Repository\MediaRepository;
 use App\Service\MediaUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,6 +18,43 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class CoursesController extends AbstractController
 {
+    #[Route('/student/bibliotheque', name: 'student_available_courses')]
+    public function getAvailableCourses(CoursesRepository $coursesRepository, ChaptersRepository $chaptersRepository, CourseEnrollmentsRepository $courseEnrollmentsRepository): Response
+    {
+        $student = $this->getUser();
+
+        $enrolledCourses = $courseEnrollmentsRepository->findBy(['student' => $student]);
+        $enrolledCourseIds = [];
+        if (!empty($enrolledCourses)) {
+            $enrolledCourseIds = array_map(function($enrollment) {
+                return $enrollment->getCourses()->getId();
+            }, $enrolledCourses);
+        }
+
+        $courses = $coursesRepository->findAll();
+        $availableCourses = array_filter($courses, function($course) use ($enrolledCourseIds) {
+            return !in_array($course->getId(), $enrolledCourseIds);
+        });
+
+        $chaptersList = [];
+        foreach ($availableCourses as $course) {
+            $chapters = $chaptersRepository->findBy(['course' => $course]);
+            $chaptersList[$course->getId()] = $chapters;
+        }
+
+        foreach ($availableCourses as $course) {
+            $course->illustrationUrl = $course->getIllustration() ? $course->getIllustration()->getFilePath() : null;
+        }
+
+        return $this->render('student/bibliotheques/available_courses.html.twig', [
+            'controller_name' => 'CoursesController',
+            'user' => $student,
+            'courses' => $availableCourses,
+            'chapters' => $chaptersList,
+        ]);
+    }
+
+
     #[Route('/teacher/courses', name: 'teacher_courses_list')]
     public function index(TeachersController $teachersController, CoursesRepository $coursesRepository, ChaptersRepository $chaptersRepository): Response
     {

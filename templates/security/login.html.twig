@@ -21,13 +21,6 @@
 
                 <!-- Formulaire -->
                 <form method="post" class="space-y-4">
-                    <!-- Erreurs -->
-                    {% if error %}
-                        <div class="text-red-500 text-sm text-center">
-                            {{ error.messageKey|trans(error.messageData, 'security') }}
-                        </div>
-                    {% endif %}
-
                     <!-- Utilisateur connecté -->
                     {% if app.user %}
                         <p class="text-sm text-center text-gray-700 dark:text-gray-300">
