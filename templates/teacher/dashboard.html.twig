@@ -1,71 +1,42 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello TeachersController!{% endblock %}
-
 {% block content %}
-<div class="p-4 sm:ml-64">
-    <div class="p-4 mt-14">
-    <h1>Connecté en tant que {{ user.firstName }}</h1>
-    <div>
-        <section>
-            <h2>Mes cours : </h2>
-            <div id="accordion-collapse" data-accordion="collapse" class="w-1/2">
-                {% for course in courses %}
-                    <h2 id="accordion-collapse-heading-{{ course.id }}">
-                        <button type="button"
-                                class="flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-b-0 border-gray-200 rounded-t-xl focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3"
-                                data-accordion-target="#accordion-collapse-body-{{ course.id }}"
-                                aria-expanded="false"
-                                aria-controls="accordion-collapse-body-{{ course.id }}"
-                                >
-                            <span>{{ course.title }}</span>
-                            <section class="flex gap-3">
-                                <img src="{{ asset('images/eye.svg') }}" alt="Eye icon" class="w-6 h-6 h-20 dark:block">
-                                <img src="{{ asset('images/eye-white.svg') }}" alt="Eye icon" class="w-6 h-6 h-20 hidden dark:block">
-
-                                <img src="{{ asset('images/pencil.svg') }}" alt="Edit icon" class="w-6 h-6 h-20 ">
-                                <svg data-accordion-icon class="w-3 h-3 rotate-0 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5 5 1 1 5"/>
+    <div class="p-4 sm:ml-64 mt-8">
+        <div class="w-full">
+            <div class="bg-gray-100 dark:bg-gray-900 p-6 w-full h-2.5">
+                <h1 class="text-3xl font-bold mb-6 text-gray-800 dark:text-white">Tableau de bord</h1>
+                <div class="flex justify-between" style="gap: 5%">
+                    <div class="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 py-6">
+                        <div class="flex flex-row items-center ">
+                            <div class="w-1/4 flex justify-center">
+                                <svg class="flex-shrink-0 w-9 h-9 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white h-11 w-11" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+                                    <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z"/>
                                 </svg>
-                            </section>
+                            </div>
+                            <div>
+                                <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">Nombre d'élèves</h5>
+                                <span class="text-3xl text-gray-500 dark:text-gray-400 ">{{ nbUniqueStudents }}</span>
 
-                        </button>
-                    </h2>
-                    <div id="accordion-collapse-body-{{ course.id }}"
-                         class="hidden"
-                         aria-labelledby="accordion-collapse-heading-{{ course.id }}">
-                        <div class="p-5 border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-900">
-                            <p class="mb-2 text-gray-500 dark:text-gray-400">{{ course.description }}</p>
-                            Liste des chapitres:
-                            {% if course.chapters is not empty %}
-                                <ul class="list-disc list-inside mt-4">
-                                    {% for chapter in course.chapters %}
-                                        <li class="text-gray-500 dark:text-gray-400 w-full flex justify-between">
-                                            {{ chapter.position}} {{ chapter.title }}: {{ chapter.description|split(' ')[:10]|join(' ') }} ...
-                                            <section class="flex w-12 gap-3">
-                                                <a href="{{ path('app_chapter_show', {'id': chapter.id}) }}" class="w-12 h-12">
-                                                    <img src="{{ asset('images/eye.svg') }}" alt="Eye icon" class="dark:block">
-                                                    <img src="{{ asset('images/eye-white.svg') }}" alt="Eye icon" class="hidden dark:block">
-                                                </a>
-                                                <a href="{{ path('app_chapter_edit', {'id': chapter.id}) }}" class="w-12 h-12">
-                                                    <img src="{{ asset('images/pencil.svg') }}" alt="Edit icon" class=" ">
-                                                </a>
-                                            </section>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            {% else %}
-                                <p class="text-gray-500 dark:text-gray-400">No chapters available for this course.</p>
-                            {% endif %}
+                            </div>
                         </div>
                     </div>
-                {% endfor %}
+                    <div class="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 py-6">
+                        <div class="flex flex-row items-center ">
+                            <div class="w-1/4 flex justify-center">
+                                <svg class="flex-shrink-0 w-9 h-9 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white h-11 w-11"
+                                     aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 21">
+                                    <path d="M16 14V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v15a3 3 0 0 0 3 3h12a1 1 0 0 0 0-2h-1v-2a2 2 0 0 0 2-2ZM4 2h2v12H4V2Zm8 16H3a1 1 0 0 1 0-2h9v2Z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">Nombre de cours</h5>
+                                <span class="text-3xl text-gray-500 dark:text-gray-400 ">{{ nbCourses }}</span>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-        </section>
-
+        </div>
     </div>
-    </div>
-</div>
-
 {% endblock %}

@@ -136,10 +136,20 @@ class ChapterController extends AbstractController
     }
 
 
-    #[Route('/teacher/chapters/{id}/delete', name: 'teacher_chapters_delete')]
-    public function delete(int $id): Response
-    {
-        return $this->redirectToRoute('teacher_chapters_list');
+    #[Route('/teacher/courses/{courseId}/chapters/{id}/delete', name: 'teacher_chapters_delete')]
+    public function deleteChapter(
+        $id,
+        $courseId,
+        ChaptersRepository $chaptersRepository,
+        EntityManagerInterface $em
+    ){
+        $chapter = $chaptersRepository->find($id);
+        if (!$chapter) {
+            throw $this->createNotFoundException('Le chapitre n\'existe pas');
+        }
+        $em->remove($chapter);
+        $em->flush();
+        return $this->redirectToRoute('admin_chapters_list', ['courseId' => $courseId]);
     }
 
     #[Route('/teacher/chapters/{id}/lessons', name: 'teacher_chapters_lessons')]

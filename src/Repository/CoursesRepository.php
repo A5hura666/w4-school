@@ -16,6 +16,19 @@ class CoursesRepository extends ServiceEntityRepository
         parent::__construct($registry, Courses::class);
     }
 
+    public function countUniqueStudents($teacher): int
+    {
+        return $this->createQueryBuilder('c')
+            ->select('COUNT(DISTINCT s.id)')
+            ->join('c.teacher', 't')
+            ->join('c.courseEnrollments', 'ce')
+            ->join('ce.student', 's')
+            ->where('c.teacher = :teacher')
+            ->setParameter('teacher', $teacher)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
     
 
     //    /**

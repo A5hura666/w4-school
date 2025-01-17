@@ -13,20 +13,15 @@ class TeachersController extends AbstractController
     #[Route('/teacher', name: 'teacher_dashboard')]
     public function index(TeachersController $teachersController, CoursesRepository $coursesRepository, ChaptersRepository $chaptersRepository): Response
     {
-        $teacher = $teachersController->getUser();
-        $courses = $coursesRepository->findBy(['teacher' => $teacher]);
-        $chaptersList = [];
-        for ($i = 0; $i < count($courses); $i++) {
-            $chapters = $chaptersRepository->findBy(['course' => $courses[$i]]);
-            $chaptersList[$courses[$i]->getId()] = $chapters;
-        }
+        $nbCourses = $coursesRepository->count(['teacher' => $teachersController->getUser()]);
+        $nbUniqueStudents = $coursesRepository->countUniqueStudents($teachersController->getUser());
 
-        return $this->render('teacher/index.html.twig', [
+        return $this->render('teacher/dashboard.html.twig', [
             'is_dashboard' => true,
             'controller_name' => 'TeachersController',
-            'user' => $teacher,
-            'courses' => $courses,
-            'chapters' => $chaptersList,
+            'user' => $teachersController->getUser(),
+            'nbCourses' => $nbCourses,
+            'nbUniqueStudents' => $nbUniqueStudents,
         ]);
     }
 
