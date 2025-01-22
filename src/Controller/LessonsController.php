@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Chapters;
 use App\Entity\Lessons;
 use App\Form\LessonsType;
+use App\Form\LessonsUpdateType;
+use App\Repository\ChaptersRepository;
 use App\Repository\LessonsRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,10 +39,12 @@ class LessonsController extends AbstractController
     }
 
     #[Route('/teacher/lessons/{chapterId}/create', name: 'teacher_lessons_create')]
-    public function create(int $chapterId, Request $request, EntityManagerInterface $em): Response
+    public function create(int $chapterId, Request $request, EntityManagerInterface $em, LessonsRepository $lessonsRepository): Response
     {
         $lesson = new Lessons();
-        $form = $this->createForm(LessonsType::class, $lesson);
+        $maxIndex = $lessonsRepository->findBy(['chapter' => $chapterId], ['position' => 'DESC'])[0]->getPosition();
+
+        $form = $this->createForm(LessonsType::class, $lesson, ['max_index' => $maxIndex]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -74,9 +78,8 @@ class LessonsController extends AbstractController
             throw $this->createNotFoundException('La leçon n\'existe pas');
         }
 
-        $form = $this->createForm(LessonsType::class, $lesson);
+        $form = $this->createForm(LessonsUpdateType::class, $lesson);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $lesson->setUpdatedAt(new \DateTimeImmutable());
             $em->persist($lesson);
@@ -100,9 +103,22 @@ class LessonsController extends AbstractController
     }
 
     #[Route('/teacher/lessons/{id}/delete', name: 'teacher_lessons_delete')]
-    public function delete(int $id): Response
+    public function delete(
+        int $id,
+        ChaptersRepository $chaptersRepository,
+        LessonsRepository $lessonsRepository,
+        EntityManagerInterface $em
+    ): Response
     {
-        return $this->redirectToRoute('teacher_lessons_list');
+        $lessons = $lessonsRepository->findBy(['id'=>$id]);
+        $courseId = $chaptersRepository->find($lessons[0]->getChapterId())->getCourseId()->getId();
+        $courseId = $chaptersRepository->find($lessons[0]->getChapterId())->getCourseId()->getId();
+        if (!$lessons) {
+            throw $this->createNotFoundException('Le chapitre n\'existe pas');
+        }
+        $em->remove($lessons[0]);
+        $em->flush();
+        return $this->redirectToRoute('teacher_chapters_list',  ['courseId' => $courseId]);
     }
 
     #[Route('/teacher/lessons/{id}/exercises', name: 'teacher_lessons_exercises')]

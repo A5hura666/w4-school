@@ -188,8 +188,8 @@ class Courses
     {
         if ($this->courseEnrollments->removeElement($courseEnrollment)) {
             // set the owning side to null (unless already changed)
-            if ($courseEnrollment->getCoursesId() === $this) {
-                $courseEnrollment->setCoursesId(null);
+            if ($courseEnrollment->getCourses() === $this) {
+                $courseEnrollment->setCourses(null);
             }
         }
 

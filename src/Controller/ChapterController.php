@@ -38,12 +38,12 @@ class ChapterController extends AbstractController
     {
         // Lister les chapitres pour un cours
         $chapters = $chaptersRepository->findBy(['course' => $courseId], ['position' => 'ASC']);
-
         // Lister les leçons pour chaque chapitre
         $lessonsByChapter = [];
         foreach ($chapters as $chapter) {
-            $lessonsByChapter[$chapter->getId()] = $lessonsRepository->findBy(['chapter' => $chapter]);
+            $lessonsByChapter[$chapter->getId()] = $lessonsRepository->findBy(['chapter' => $chapter], ['position' => 'ASC']);
         }
+
 
         return $this->render('teacher/chapters/index.html.twig', [
             'courseId' => $courseId,
@@ -57,7 +57,10 @@ class ChapterController extends AbstractController
     public function create(int $courseId, Request $request, EntityManagerInterface $em, ChaptersRepository $chaptersRepository ): Response
     {
         $chapter = new Chapters();
-        $form = $this->createForm(ChaptersType::class, $chapter);
+        $maxIndex = $chaptersRepository->findBy(['course' => $courseId], ['position' => 'DESC'])[0]->getPosition();
+
+        $form = $this->createForm(ChaptersType::class, $chapter, ['max_index' =>$maxIndex]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -65,22 +68,13 @@ class ChapterController extends AbstractController
             if ($course) {
                 $chapter->setCourseId($course);
                 $chapter->setCreatedAt(new \DateTimeImmutable());
-                $chapter->setUpdatedAt(new \DateTimeImmutable());
-
-                // Check for position conflicts
-                $position = $chapter->getPosition();
-                $conflictingChapters = $chaptersRepository->findChaptersWithPositionGreaterThanOrEqual($position, $courseId);
-                foreach ($conflictingChapters as $conflictingChapter) {
-                    $conflictingChapter->setPosition($conflictingChapter->getPosition() + 1);
-                    $em->persist($conflictingChapter);
-                }
-
                 $em->persist($chapter);
                 $em->flush();
+                $courseId = $chapter->getCourseId()->getId();
 
                 return $this->redirectToRoute('teacher_chapters_list', ['courseId' => $courseId]);
             } else {
-                throw $this->createNotFoundException('Le cours associé n\'existe pas');
+                throw $this->createNotFoundException('Le chapitre associé n\'existe pas');
             }
         }
 
@@ -136,20 +130,20 @@ class ChapterController extends AbstractController
     }
 
 
-    #[Route('/teacher/courses/{courseId}/chapters/{id}/delete', name: 'teacher_chapters_delete')]
+    #[Route('/teacher/chapters/{id}/delete', name: 'teacher_chapters_delete')]
     public function deleteChapter(
         $id,
-        $courseId,
         ChaptersRepository $chaptersRepository,
         EntityManagerInterface $em
     ){
         $chapter = $chaptersRepository->find($id);
+        $courseId = $chapter->getCourseId()->getId();
         if (!$chapter) {
             throw $this->createNotFoundException('Le chapitre n\'existe pas');
         }
         $em->remove($chapter);
         $em->flush();
-        return $this->redirectToRoute('admin_chapters_list', ['courseId' => $courseId]);
+        return $this->redirectToRoute('teacher_chapters_list', ['courseId' => $courseId]);
     }
 
     #[Route('/teacher/chapters/{id}/lessons', name: 'teacher_chapters_lessons')]
