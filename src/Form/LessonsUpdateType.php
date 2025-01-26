@@ -29,6 +29,7 @@ class LessonsUpdateType extends AbstractType
                     'placeholder' => 'Position de la leçon',
                     'max' => $lesson->getPosition() + 1,
                     'value' => $lesson->getPosition(),
+                    'min' => 1,
                 ],
             ]);
     }

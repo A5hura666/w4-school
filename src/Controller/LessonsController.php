@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Chapters;
 use App\Entity\Lessons;
+use App\Event\SortableEvent;
 use App\Form\LessonsType;
 use App\Form\LessonsUpdateType;
 use App\Repository\ChaptersRepository;
@@ -13,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class LessonsController extends AbstractController
 {
@@ -42,7 +44,11 @@ class LessonsController extends AbstractController
     public function create(int $chapterId, Request $request, EntityManagerInterface $em, LessonsRepository $lessonsRepository): Response
     {
         $lesson = new Lessons();
-        $maxIndex = $lessonsRepository->findBy(['chapter' => $chapterId], ['position' => 'DESC'])[0]->getPosition();
+        if ($lessonsRepository->findBy(['chapter' => $chapterId], ['position' => 'DESC'])){
+            $maxIndex = $lessonsRepository->findBy(['chapter' => $chapterId], ['position' => 'DESC'])[0]->getPosition();
+        } else {
+            $maxIndex = 0;
+        }
 
         $form = $this->createForm(LessonsType::class, $lesson, ['max_index' => $maxIndex]);
         $form->handleRequest($request);
@@ -88,7 +94,8 @@ class LessonsController extends AbstractController
             $chapter = $lesson->getChapterId();
             if ($chapter) {
                 $courseId = $chapter->getCourseId()->getId();
-
+                // $event = new SortableEvent($lesson);
+                // $dispatcher->dispatch($event, SortableEvent::UPDATE);
                 return $this->redirectToRoute('teacher_chapters_list', ['courseId' => $courseId]);
             } else {
                 throw $this->createNotFoundException('Le chapitre associé n\'existe pas');

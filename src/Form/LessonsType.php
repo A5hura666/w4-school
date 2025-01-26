@@ -28,6 +28,7 @@ class LessonsType extends AbstractType
                     'placeholder' => 'Position de la leçon',
                     'max' => $maxIndex + 1,
                     'value' => $maxIndex + 1,
+                    'min' => 1,
                 ],
             ]);
     }

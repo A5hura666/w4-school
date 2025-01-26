@@ -19,11 +19,11 @@ Application de cours en ligne :
 
 ## Points techniques réalisés
 
-#### - Application symfony full-stack : 
+ - Application symfony full-stack : 
 Utilisation de .twig pour la partie front-end et de symfony pour la partie back-end
-#### - Système de mailing : Lors de la créatio nde compte et de la réinitialisation du mot de passe un mai lest envoyé
-#### - Système de connexion : Utilisation de l'authentification de symfony
-#### - Utilisation de Listener : 
+- Système de mailing : Lors de la créatio nde compte et de la réinitialisation du mot de passe un mai lest envoyé
+ - Système de connexion : Utilisation de l'authentification de symfony
+ - Utilisation de Listener : 
 
 On a créé une interface `Sortable`. Les classes `Chapters` et les `Lessons` implémentent cette interface pour que l'on puisse mieux utiliser le listener `SortableListener`.
 
